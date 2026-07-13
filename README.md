@@ -1,0 +1,1 @@
+# latsol-tata-nama-senyawa-ionik2
