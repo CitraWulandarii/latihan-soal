@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Pembelajaran Kimia</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/css/auth.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/css/style.css">
+  <style>
+    /* Default variables for base structure */
+    :root{
+      --pri-50:#fff8f0; --pri-100:#ffeeda; --pri-150:#ffe2c2; --pri-200:#ffd0a0;
+      --pri-300:#ffb574; --pri-400:#ff9a45; --pri-500:#fb852a; --pri-600:#ef6d10; --pri-700:#d35c06;
+      --yellow:#ffd76a; --yellow-active:#ffe6a3; --yellow-line:#f3cf6a; --yellow-ink:#8a5300;
+      --ink:#4a3826; --ink-soft:#6e5b45; --muted:#a08a72; --line:#f6e4cd;
+      --green:#1fb583; --green-soft:#e6faf2; --red:#ec5b76; --red-soft:#ffeef0; --gray-chip:#eee6da;
+      --card:#ffffff; --glass:rgba(255,255,255,.78);
+      --shadow-sm:0 4px 16px -6px rgba(220,120,20,.22);
+      --shadow-md:0 16px 40px -16px rgba(220,110,15,.30);
+      --shadow-lg:0 30px 70px -24px rgba(210,100,15,.38);
+      --r-lg:28px; --r-md:20px; --r-sm:14px;
+      --grad:linear-gradient(135deg,#ff9d3f 0%,#f5811a 50%,#e56409 100%);
+      --grad-warm:linear-gradient(135deg,#ffca5a,#ffab3a,#fb852a);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Decorative blobs for background -->
+  <div class="bg-decor" id="decor">
+    <div class="blob" style="width: 300px; height: 300px; background: #e9f6ee; top: -50px; left: -100px; animation-duration: 12s;"></div>
+    <div class="blob" style="width: 250px; height: 250px; background: #cce8d9; bottom: -50px; right: -50px; animation-duration: 15s; animation-delay: -3s;"></div>
+  </div>
+
+  <!-- Global Header -->
+  <header id="global-header" class="global-header" style="display: none;">
+    <div class="header-inner">
+      <div class="user-info">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Halo, <b id="header-name">Siswa</b></span>
+      </div>
+      
+      <nav class="header-nav">
+        <button id="btn-nav-dashboard" class="nav-item-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Latihan Soal
+        </button>
+      </nav>
+
+      <button id="btn-logout" class="btn-logout">
+        Keluar
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- AUTH VIEW -->
+  <section id="auth-screen" class="screen active">
+    <div class="auth-container">
+      
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <button id="tab-login" class="tab-btn active">Masuk</button>
+        <button id="tab-register" class="tab-btn">Pendaftaran</button>
+      </div>
+
+      <!-- LOGIN VIEW -->
+      <div id="login-view" class="view-active">
+        <div class="auth-header">
+          <h1>Selamat Datang</h1>
+          <p>Masuk untuk memulai kuis dan melihat progress belajarmu.</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="alert"></div>
+          
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" name="username" placeholder="Masukkan username" required autocomplete="username">
+          </div>
+          
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" name="password" placeholder="Masukkan password" required autocomplete="current-password">
+          </div>
+
+          <button type="submit" class="btn">
+            <span class="text">Masuk</span>
+            <span class="spinner"></span>
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          Belum punya akun? <a href="#" id="switch-register">Daftar sekarang</a>
+        </div>
+      </div>
+
+      <!-- REGISTER VIEW -->
+      <div id="register-view">
+        <div class="auth-header">
+          <h1>Buat Akun</h1>
+          <p>Daftar sekarang untuk mengikuti kuis kimia.</p>
+        </div>
+
+        <form id="registerForm">
+          <div class="alert"></div>
+
+          <div class="form-group">
+            <label for="reg-name">Nama Lengkap</label>
+            <input type="text" id="reg-name" name="name" placeholder="Misal: Budi" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-kelas">Kelas</label>
+            <input type="text" id="reg-kelas" name="kelas" placeholder="Misal: X MIPA 1" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-username">Username</label>
+            <input type="text" id="reg-username" name="username" placeholder="Buat username" required autocomplete="username">
+          </div>
+          
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" name="password" placeholder="Buat password minimal 6 karakter" minlength="6" required autocomplete="new-password">
+          </div>
+
+          <button type="submit" class="btn">
+            <span class="text">Daftar</span>
+            <span class="spinner"></span>
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          Sudah punya akun? <a href="#" id="switch-login">Masuk di sini</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DASHBOARD VIEW -->
+  <section id="dashboard-screen" class="screen">
+    <div class="dash-wrap">
+      <h2 class="font-display">Pilih Latihan Soal</h2>
+      <div class="quiz-grid" id="quiz-grid">
+        <!-- Will be populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN VIEW -->
+  <section id="admin-screen" class="screen">
+    <div class="dash-wrap">
+      <div class="admin-header-row">
+        <h2 class="font-display">Rekap Nilai & Progress Siswa</h2>
+        <button id="btn-refresh-admin" class="btn-refresh">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Segarkan Data
+        </button>
+      </div>
+      
+      <div class="admin-table-card">
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Latihan 1</th>
+                <th>Latihan 2</th>
+                <th>Latihan 3</th>
+                <th>Latihan 4</th>
+                <th>Latihan 5</th>
+                <th>Latihan 6</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-body">
+              <tr>
+                <td colspan="9" style="text-align: center; padding: 24px; color: var(--ink-soft);">Memuat data rekap...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ WRAPPER -->
+  <main class="app screen" id="quiz-screen">
+    
+
+  <!-- START -->
+  <section class="screen" id="screen-start">
+    <div class="hero">
+      <div class="hero-card">
+        <img class="hero-mascot" src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/img/img_1.webp" alt="Maskot ilmuwan cilik" />
+        <span class="eyebrow">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d35c06" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.5L4.5 17a2.5 2.5 0 0 0 2.2 3.7h10.6A2.5 2.5 0 0 0 19.5 17L15 8.5V2"/><path d="M7 2h10M8.5 13h7"/></svg>
+          Kuis Kimia Interaktif
+        </span>
+        <h1 class="font-display">Latihan Soal<br>Tata Nama Senyawa Kovalen Biner</h1>
+        <p class="sub">Jawab 10 soal pilihan ganda dan raih skor terbaikmu! 🧪</p>
+        <div class="meta-row">
+          <span class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="#d35c06" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>10 Soal</span>
+          <span class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="#ef6d10" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M8.2 13.5L7 22l5-3 5 3-1.2-8.5"/></svg>Skor 100</span>
+          <span class="meta-pill"><svg viewBox="0 0 24 24" fill="none" stroke="#1fb583" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Pembahasan</span>
+        </div>
+        <button class="btn btn-start" id="btnStart">MULAI<span class="arrow">→</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="screen-quiz">
+    <div class="topbar">
+      <div class="tb-head">
+        <div class="tb-num">Soal <b id="curNum">1</b> dari 10</div>
+        <div class="tb-score" id="scoreChip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef6d10" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M8.2 13.5L7 22l5-3 5 3-1.2-8.5"/></svg>
+          Skor: <span class="pop" id="scoreVal">0</span>
+        </div>
+      </div>
+      <div class="progress"><i id="progBar"></i></div>
+      <div class="nav-nums" id="navNums"></div>
+    </div>
+
+    <div class="qcard">
+      <div class="qbadge" id="qBadge">PERTANYAAN 1</div>
+      <div class="qtext" id="qText"></div>
+      <div class="options" id="options"></div>
+
+      <div class="feedback" id="feedback">
+        <div class="fb-icon" id="fbIcon"></div>
+        <div class="fb-txt"><b id="fbTitle"></b><span id="fbSub"></span></div>
+      </div>
+
+      <div class="exp-toggle" id="expToggle">
+        <button class="btn-exp" id="btnExp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#d35c06" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5A2.5 2.5 0 0 1 4.5 4H10a2 2 0 0 1 2 2 2 2 0 0 1 2-2h5.5A2.5 2.5 0 0 1 22 6.5V18a2 2 0 0 1-2 2h-6a2 2 0 0 0-2 2 2 2 0 0 0-2-2H4a2 2 0 0 1-2-2Z"/><path d="M12 6v16"/></svg>
+          Lihat Pembahasan
+        </button>
+        <div class="exp-body" id="expBody"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-nav" id="btnBack" title="Sebelumnya">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="btn btn-submit" id="btnSubmit" disabled>SUBMIT</button>
+        <button class="btn-nav" id="btnNext" title="Berikutnya">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+
+      <div class="finish-wrap" id="finishWrap">
+        <button class="btn btn-finish" id="btnFinish">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          Lihat Hasil Akhir
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="screen-result">
+    <div class="result-card">
+      <img class="res-mascot" src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/img/img_2.webp" alt="Maskot" />
+      <div class="res-title font-display">Skor Akhir Kamu</div>
+      <div class="dial">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9d3f"/><stop offset="1" stop-color="#e56409"/></linearGradient></defs>
+          <circle class="track" cx="100" cy="100" r="85"/>
+          <circle class="bar" id="dialBar" cx="100" cy="100" r="85"/>
+        </svg>
+        <div class="center"><span class="big" id="resScore">0</span><span class="of">/ 100</span></div>
+      </div>
+      <p class="res-msg" id="resMsg"></p>
+      <div class="res-stats">
+        <div class="stat c"><b id="resCorrect">0</b><span>Benar</span></div>
+        <div class="stat w"><b id="resWrong">0</b><span>Salah</span></div>
+        <div class="stat s"><b id="resPct">0%</b><span>Akurasi</span></div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <h3 class="font-display"><svg viewBox="0 0 24 24" fill="none" stroke="#d35c06" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Rekap Jawaban</h3>
+      <div id="recapList"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px">
+      <button class="btn-restart" id="btnRestart" style="margin:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        Ulangi Kuis
+      </button>
+      <button class="btn-restart" id="btnBackMenu" style="margin:0;color:#1e7a4e;border-color:var(--green)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Kembali ke Menu
+      </button>
+    </div>
+  </section>
+
+  <p class="footer">Media Pembelajaran Kimia · Tata Nama Senyawa Kovalen Biner · Pendidikan Kimia UM</p>
+
+  </main>
+
+  <canvas id="confetti" style="display:none;position:fixed;inset:0;z-index:99;pointer-events:none;"></canvas>
+
+  <script>
+    let getGasUrl = "<?= gasUrl ?>";
+    const GAS_URL_KEY = 'citra_gas_url';
+    if (getGasUrl.includes("<" + "?=")) {
+      getGasUrl = localStorage.getItem(GAS_URL_KEY) || "";
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/js/auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/js/quiz.js" defer></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@latest/assets/js/main.js"></script>
+</body>
+</html>
