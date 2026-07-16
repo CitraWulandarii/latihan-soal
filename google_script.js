@@ -1,23 +1,5 @@
-/**
- * Google Apps Script for Portal Pembelajaran Kimia
- * 
- * SETUP INSTRUCTIONS:
- * 1. Go to script.google.com and create a new project.
- * 2. Paste this entire code.
- * 3. Replace the `SPREADSHEET_ID` with your Google Spreadsheet ID.
- *    (You can find the ID in the URL of your spreadsheet: https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit)
- * 4. Ensure your spreadsheet has two tabs named EXACTLY:
- *    - "users" (Columns A-F: Timestamp, Name, Kelas, Username, Password)
- *    - "result" (Columns A-D: Timestamp, Username, Quiz_ID, Score)
- * 5. Click Deploy > New deployment.
- * 6. Select type: "Web app".
- * 7. Execute as: "Me".
- * 8. Who has access: "Anyone".
- * 9. Click Deploy and copy the Web App URL.
- * 10. Paste the Web App URL into `assets/js/auth.js` and `assets/js/quiz.js`.
- */
-
 const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; // GANTI DENGAN ID SPREADSHEET ANDA
+const VERSION_GIT = 'latest'; // Defaultnya yang terbaru, bisa diganti dengan versi release repo github
 
 function doPost(e) {
   try {
@@ -41,11 +23,7 @@ function doPost(e) {
 
 function handleRegister(e) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName('users');
-  
-  if (!sheet) {
-    return respond({ status: 'error', message: 'Sheet "users" tidak ditemukan' });
-  }
+  const sheet = getSheetOrCreate(ss, 'users');
   
   const name = e.parameter.name;
   const kelas = e.parameter.kelas;
@@ -67,11 +45,7 @@ function handleRegister(e) {
 
 function handleLogin(e) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName('users');
-  
-  if (!sheet) {
-    return respond({ status: 'error', message: 'Sheet "users" tidak ditemukan' });
-  }
+  const sheet = getSheetOrCreate(ss, 'users');
   
   const username = e.parameter.username;
   const password = e.parameter.password;
@@ -98,11 +72,7 @@ function handleLogin(e) {
 
 function handleSubmitScore(e) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName('result');
-  
-  if (!sheet) {
-    return respond({ status: 'error', message: 'Sheet "result" tidak ditemukan' });
-  }
+  const sheet = getSheetOrCreate(ss, 'result');
   
   const username = e.parameter.username;
   const quizId = e.parameter.quiz_id;
@@ -114,12 +84,8 @@ function handleSubmitScore(e) {
 
 function handleGetAllResults(e) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const usersSheet = ss.getSheetByName('users');
-  const resultsSheet = ss.getSheetByName('result');
-  
-  if (!usersSheet || !resultsSheet) {
-    return respond({ status: 'error', message: 'Sheet "users" atau "result" tidak ditemukan' });
-  }
+  const usersSheet = getSheetOrCreate(ss, 'users');
+  const resultsSheet = getSheetOrCreate(ss, 'result');
   
   const usersData = usersSheet.getDataRange().getValues();
   const resultsData = resultsSheet.getDataRange().getValues();
@@ -155,6 +121,19 @@ function handleGetAllResults(e) {
   });
 }
 
+function getSheetOrCreate(ss, sheetName) {
+  let sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+    if (sheetName === 'users') {
+      sheet.appendRow(['Timestamp', 'Name', 'Kelas', 'Username', 'Password', 'Role']);
+    } else if (sheetName === 'result') {
+      sheet.appendRow(['Timestamp', 'Username', 'Quiz_ID', 'Score']);
+    }
+  }
+  return sheet;
+}
+
 function respond(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
@@ -185,6 +164,7 @@ function doGet(e) {
     // Fallback jika dijalankan langsung di editor Apps Script tanpa status Web App
   }
   html.gasUrl = gasUrl;
+  html.versiGit = VERSION_GIT;
 
   return html.evaluate()
     .setTitle('Latihan Soal')

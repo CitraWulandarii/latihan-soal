@@ -47,10 +47,15 @@
         </button>
       </nav>
 
-      <button id="btn-logout" class="btn-logout">
-        Keluar
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      </button>
+      <div style="display: flex; gap: 8px;">
+        <button id="btn-settings-header" class="btn-logout" title="Pengaturan URL GAS">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button id="btn-logout" class="btn-logout">
+          Keluar
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -59,9 +64,12 @@
     <div class="auth-container">
       
       <!-- TABS -->
-      <div class="auth-tabs">
+      <div class="auth-tabs" style="position: relative;">
         <button id="tab-login" class="tab-btn active">Masuk</button>
         <button id="tab-register" class="tab-btn">Pendaftaran</button>
+        <button id="btn-settings-auth" style="position: absolute; right: 0; background: transparent; border: none; cursor: pointer; padding: 10px; color: var(--ink-soft);" title="Pengaturan URL GAS">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
       </div>
 
       <!-- LOGIN VIEW -->
@@ -307,12 +315,59 @@
 
   <canvas id="confetti" style="display:none;position:fixed;inset:0;z-index:99;pointer-events:none;"></canvas>
 
+  <!-- GAS URL Settings Modal -->
+  <div id="gas-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <h2 style="margin-top:0;font-family:var(--font-display);color:var(--ink)">Pengaturan API GAS</h2>
+      <p style="color:var(--ink-soft);font-size:0.95rem;margin-bottom:1.5rem">
+        Masukkan URL Google Apps Script Web App Anda. Kosongkan untuk menggunakan Default URL atau Dev Mode.
+      </p>
+      <div class="input-group">
+        <label>URL GAS Web App</label>
+        <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+      <div style="display:flex;gap:12px;margin-top:24px;justify-content:flex-end">
+        <button id="btn-gas-cancel" class="btn-secondary" style="margin:0">Batal</button>
+        <button id="btn-gas-save" class="btn-primary" style="margin:0">Simpan</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let getGasUrl = "<?= gasUrl ?>";
     const GAS_URL_KEY = 'citra_gas_url';
     if (getGasUrl.includes("<" + "?=")) {
       getGasUrl = localStorage.getItem(GAS_URL_KEY) || "";
     }
+
+    // Modal Logic
+    const gasModal = document.getElementById('gas-modal');
+    const gasInput = document.getElementById('gas-url-input');
+    
+    function openGasModal() {
+      gasInput.value = localStorage.getItem(GAS_URL_KEY) || "";
+      gasModal.style.display = 'flex';
+      // Kecil delay agar transisi CSS berjalan
+      setTimeout(() => gasModal.classList.add('open'), 10);
+    }
+    
+    function closeGasModal() {
+      gasModal.classList.remove('open');
+      setTimeout(() => gasModal.style.display = 'none', 250);
+    }
+
+    document.getElementById('btn-settings-header')?.addEventListener('click', openGasModal);
+    document.getElementById('btn-settings-auth')?.addEventListener('click', openGasModal);
+    document.getElementById('btn-gas-cancel')?.addEventListener('click', closeGasModal);
+    
+    document.getElementById('btn-gas-save')?.addEventListener('click', () => {
+      const val = gasInput.value.trim();
+      localStorage.setItem(GAS_URL_KEY, val);
+      getGasUrl = val;
+      closeGasModal();
+      // Reload halaman untuk terapkan koneksi baru
+      window.location.reload();
+    });
   </script>
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/quiz.js" defer></script>
