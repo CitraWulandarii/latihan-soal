@@ -64,7 +64,7 @@ if (loginForm) {
     const btn = loginForm.querySelector('button[type="submit"]');
     setLoading(btn, true);
 
-    const url = getGasUrl();
+    const url = getGasUrl;
 
     if (url === GAS_URL_DEFAULT) {
       // Dev mode: skip GAS, use localStorage mock login
@@ -121,7 +121,7 @@ if (registerForm) {
     const btn = registerForm.querySelector('button[type="submit"]');
     setLoading(btn, true);
 
-    const url = getGasUrl();
+    const url = getGasUrl;
 
     if (url === GAS_URL_DEFAULT) {
       setLoading(btn, false);

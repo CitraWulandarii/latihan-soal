@@ -177,7 +177,7 @@ function showResult() {
 
   // ── Save score to GAS in background ──────────────────────────────────────
   const username = localStorage.getItem('citra_username');
-  const gasUrl = getGasUrl();
+  const gasUrl = getGasUrl;
   if (username && gasUrl !== GAS_URL_DEFAULT) {
     const formData = new URLSearchParams();
     formData.append('action', 'submit_score');
