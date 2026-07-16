@@ -4,9 +4,6 @@
  * Calls window.onLoginSuccess(userData) when login succeeds.
  */
 
-const GAS_URL_KEY = 'citra_gas_url';
-const getGasUrl = () => localStorage.getItem(GAS_URL_KEY) || GAS_URL_DEFAULT;
-
 // ─── View Switching ───────────────────────────────────────────────────────────
 const loginView = document.getElementById('login-view');
 const registerView = document.getElementById('register-view');
