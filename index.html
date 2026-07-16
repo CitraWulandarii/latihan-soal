@@ -149,6 +149,44 @@
     </div>
   </section>
 
+  <!-- ADMIN VIEW -->
+  <section id="admin-screen" class="screen">
+    <div class="dash-wrap">
+      <div class="admin-header-row">
+        <h2 class="font-display">Rekap Nilai & Progress Siswa</h2>
+        <button id="btn-refresh-admin" class="btn-refresh">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Segarkan Data
+        </button>
+      </div>
+      
+      <div class="admin-table-card">
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Latihan 1</th>
+                <th>Latihan 2</th>
+                <th>Latihan 3</th>
+                <th>Latihan 4</th>
+                <th>Latihan 5</th>
+                <th>Latihan 6</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-body">
+              <tr>
+                <td colspan="9" style="text-align: center; padding: 24px; color: var(--ink-soft);">Memuat data rekap...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- QUIZ WRAPPER -->
   <main class="app screen" id="quiz-screen">
     

@@ -73,11 +73,14 @@ if (loginForm) {
       // Dev mode: skip GAS, use localStorage mock login
       setLoading(btn, false);
       const username = formData.get('username');
+      // Dev mode: username 'admin' or 'guru' auto-gets admin role
+      const role = (username.toLowerCase() === 'admin' || username.toLowerCase() === 'guru') ? 'admin' : 'student';
       localStorage.setItem('citra_username', username);
       localStorage.setItem('citra_name', username);
       localStorage.setItem('citra_kelas', '-');
+      localStorage.setItem('citra_role', role);
       if (typeof window.onLoginSuccess === 'function') {
-        window.onLoginSuccess({ name: username, kelas: '-' });
+        window.onLoginSuccess({ name: username, kelas: '-', role: role });
       }
       return;
     }
@@ -88,11 +91,13 @@ if (loginForm) {
         setLoading(btn, false);
         if (res.status === 'success') {
           showAlert(loginForm, 'success', 'Login berhasil!');
+          const role = res.data.role || 'student';
           localStorage.setItem('citra_username', formData.get('username'));
           localStorage.setItem('citra_name', res.data.name);
           localStorage.setItem('citra_kelas', res.data.kelas);
+          localStorage.setItem('citra_role', role);
           if (typeof window.onLoginSuccess === 'function') {
-            window.onLoginSuccess({ name: res.data.name, kelas: res.data.kelas });
+            window.onLoginSuccess({ name: res.data.name, kelas: res.data.kelas, role: role });
           }
         } else {
           showAlert(loginForm, 'error', res.message || 'Login gagal.');

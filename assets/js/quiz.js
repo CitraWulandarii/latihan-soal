@@ -182,7 +182,7 @@ function showResult() {
     const formData = new URLSearchParams();
     formData.append('action', 'submit_score');
     formData.append('username', username);
-    formData.append('quiz_id', document.title);
+    formData.append('quiz_id', window.currentQuizId || document.title);
     formData.append('score', sc);
     fetch(gasUrl, { method: 'POST', body: formData })
       .then(r => r.json())

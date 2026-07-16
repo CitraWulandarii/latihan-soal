@@ -1,6 +1,6 @@
 /**
  * main.js - SPA Controller (ES6 Module)
- * Handles routing between screens (auth, dashboard, quiz)
+ * Handles routing between screens (auth, dashboard, quiz, admin)
  * and dynamically loads quiz data modules.
  */
 
@@ -16,7 +16,7 @@ const QUIZ_LIST = [
 
 // ─── DOM Helpers ─────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-const screens = ['auth-screen', 'dashboard-screen', 'quiz-screen'];
+const screens = ['auth-screen', 'dashboard-screen', 'quiz-screen', 'admin-screen'];
 
 export function showScreen(id) {
   screens.forEach(s => {
@@ -38,6 +38,13 @@ function showHeader(show) {
 function setHeaderUser(name) {
   const el = $('header-name');
   if (el) el.textContent = name || 'Siswa';
+}
+
+/** Show or hide the "Latihan Soal" nav button (hidden for admin role) */
+function setHeaderNav(role) {
+  const navBtn = $('btn-nav-dashboard');
+  if (!navBtn) return;
+  navBtn.style.display = role === 'admin' ? 'none' : '';
 }
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
@@ -79,6 +86,8 @@ async function loadQuiz(id) {
 
     // Expose QUIZ globally so quiz.js can access it
     window.QUIZ = quizModule.QUIZ;
+    // Expose quiz ID globally so quiz.js can submit score with correct key
+    window.currentQuizId = id;
 
     // Update page title
     document.title = quizModule.title || 'Kuis Kimia';
@@ -97,8 +106,6 @@ async function loadQuiz(id) {
 
 function applyTheme(themeVars) {
   if (!themeVars) return;
-  // themeVars is a template literal string containing CSS variable declarations
-  // We parse it and apply to :root via a style tag
   let styleTag = document.getElementById('dynamic-theme');
   if (!styleTag) {
     styleTag = document.createElement('style');
@@ -110,16 +117,12 @@ function applyTheme(themeVars) {
 
 // ─── Quiz Engine (quiz.js logic wired here) ──────────────────────────────────
 function initQuizEngine() {
-  // Reset state
   window._quizCur = 0;
   window._quizState = window.QUIZ.map(() => ({ sel: null, sub: false }));
-
-  // Show start screen
   quizShowScreen('screen-start');
   buildNav();
 }
 
-// These functions mirror quiz.js but are called here after QUIZ is available
 function quizShowScreen(id) {
   document.querySelectorAll('#quiz-screen .screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -138,11 +141,94 @@ function buildNav() {
   });
 }
 
+// ─── Admin Data ──────────────────────────────────────────────────────────────
+const QUIZ_IDS = ['soal_1', 'soal_2', 'soal_3', 'soal_4', 'soal_5', 'soal_6'];
+
+async function loadAdminData() {
+  const tbody = $('admin-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--ink-soft)">Memuat data rekap...</td></tr>';
+
+  const gasUrl = localStorage.getItem('citra_gas_url') || GAS_URL_DEFAULT;
+
+  if (gasUrl === GAS_URL_DEFAULT) {
+    // Dev mode: render mock student data
+    renderAdminTable([
+      { name: 'Budi Santoso', kelas: 'X MIPA 1', username: 'budi' },
+      { name: 'Siti Rahayu', kelas: 'X MIPA 2', username: 'siti' },
+      { name: 'Ahmad Fauzi', kelas: 'X MIPA 1', username: 'ahmad' },
+    ], [
+      { username: 'budi', quiz_id: 'soal_1', score: 80 },
+      { username: 'budi', quiz_id: 'soal_2', score: 90 },
+      { username: 'budi', quiz_id: 'soal_3', score: 70 },
+      { username: 'siti', quiz_id: 'soal_1', score: 100 },
+      { username: 'siti', quiz_id: 'soal_4', score: 60 },
+      { username: 'ahmad', quiz_id: 'soal_2', score: 50 },
+      { username: 'ahmad', quiz_id: 'soal_5', score: 100 },
+    ]);
+    return;
+  }
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append('action', 'get_all_results');
+    const res = await fetch(gasUrl, { method: 'POST', body: formData });
+    const json = await res.json();
+    if (json.status === 'success') {
+      renderAdminTable(json.data.students, json.data.scores);
+    } else {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--red)">${json.message || 'Gagal memuat data.'}</td></tr>`;
+    }
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--red)">Terjadi kesalahan koneksi.</td></tr>';
+  }
+}
+
+function renderAdminTable(students, scores) {
+  const tbody = $('admin-table-body');
+  if (!tbody) return;
+
+  if (!students || students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--ink-soft)">Belum ada data siswa.</td></tr>';
+    return;
+  }
+
+  // Build a lookup: { username: { soal_1: score, soal_2: score, ... } }
+  const scoreMap = {};
+  scores.forEach(s => {
+    const u = s.username;
+    if (!scoreMap[u]) scoreMap[u] = {};
+    // Keep the highest score for each quiz
+    const existing = scoreMap[u][s.quiz_id];
+    if (existing === undefined || Number(s.score) > Number(existing)) {
+      scoreMap[u][s.quiz_id] = Number(s.score);
+    }
+  });
+
+  tbody.innerHTML = students.map((student, idx) => {
+    const cells = QUIZ_IDS.map(qId => {
+      const sc = scoreMap[student.username]?.[qId];
+      if (sc === undefined) return `<td><span class="score-badge empty">-</span></td>`;
+      let cls = sc >= 90 ? 'perfect' : sc >= 70 ? 'good' : 'fair';
+      return `<td><span class="score-badge ${cls}">${sc}</span></td>`;
+    }).join('');
+
+    return `<tr>
+      <td style="font-weight:800;color:var(--ink)">${idx + 1}</td>
+      <td style="font-weight:800;color:var(--ink)">${student.name}</td>
+      <td>${student.kelas}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+}
+
 // ─── Logout ──────────────────────────────────────────────────────────────────
 function logout() {
   localStorage.removeItem('citra_username');
   localStorage.removeItem('citra_name');
   localStorage.removeItem('citra_kelas');
+  localStorage.removeItem('citra_role');
   showHeader(false);
   showScreen('auth-screen');
   document.body.style.paddingTop = '0';
@@ -150,17 +236,24 @@ function logout() {
 
 // ─── Auth Success Callback (called from auth.js) ──────────────────────────────
 window.onLoginSuccess = function(userData) {
+  const role = userData.role || 'student';
   setHeaderUser(userData.name);
+  setHeaderNav(role);
   showHeader(true);
   document.body.style.paddingTop = '60px';
-  renderDashboard();
-  showScreen('dashboard-screen');
+
+  if (role === 'admin') {
+    showScreen('admin-screen');
+    loadAdminData();
+  } else {
+    renderDashboard();
+    showScreen('dashboard-screen');
+  }
 };
 
 // Back to dashboard from quiz result
 window.backToDashboard = function() {
   showScreen('dashboard-screen');
-  // Reset confetti canvas
   const cv = $('confetti');
   if (cv) cv.style.display = 'none';
 };
@@ -171,24 +264,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = $('btn-logout');
   if (logoutBtn) logoutBtn.addEventListener('click', logout);
 
-  // Dashboard Nav button
+  // Refresh admin data button
+  const refreshBtn = $('btn-refresh-admin');
+  if (refreshBtn) refreshBtn.addEventListener('click', loadAdminData);
+
+  // Dashboard Nav button (student only)
   const navDashboardBtn = $('btn-nav-dashboard');
   if (navDashboardBtn) {
     navDashboardBtn.addEventListener('click', () => {
-      if (typeof window.backToDashboard === 'function') {
-        window.backToDashboard();
-      }
+      if (typeof window.backToDashboard === 'function') window.backToDashboard();
     });
   }
 
   // Check if already logged in
   const savedUser = localStorage.getItem('citra_username');
   const savedName = localStorage.getItem('citra_name');
+  const savedRole = localStorage.getItem('citra_role') || 'student';
   if (savedUser) {
     setHeaderUser(savedName || savedUser);
+    setHeaderNav(savedRole);
     showHeader(true);
     document.body.style.paddingTop = '60px';
-    renderDashboard();
-    showScreen('dashboard-screen');
+    if (savedRole === 'admin') {
+      showScreen('admin-screen');
+      loadAdminData();
+    } else {
+      renderDashboard();
+      showScreen('dashboard-screen');
+    }
   }
 });

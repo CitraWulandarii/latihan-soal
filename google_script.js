@@ -29,6 +29,8 @@ function doPost(e) {
       return handleLogin(e);
     } else if (action === 'submit_score') {
       return handleSubmitScore(e);
+    } else if (action === 'get_all_results') {
+      return handleGetAllResults(e);
     }
     
     return respond({ status: 'error', message: 'Action not found' });
@@ -58,8 +60,8 @@ function handleRegister(e) {
     }
   }
   
-  // Simpan data
-  sheet.appendRow([new Date(), name, kelas, username, password]);
+  // Simpan data (Role default 'student' di kolom F)
+  sheet.appendRow([new Date(), name, kelas, username, password, 'student']);
   return respond({ status: 'success', message: 'Registrasi berhasil' });
 }
 
@@ -77,13 +79,15 @@ function handleLogin(e) {
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (data[i][3] == username && data[i][4] == password) {
-      // Return user data (name and kelas)
+      const role = data[i][5] || 'student';
+      // Return user data (name, kelas, and role)
       return respond({ 
         status: 'success', 
         message: 'Login berhasil',
         data: {
           name: data[i][1],
-          kelas: data[i][2]
+          kelas: data[i][2],
+          role: role
         }
       });
     }
@@ -106,6 +110,49 @@ function handleSubmitScore(e) {
   
   sheet.appendRow([new Date(), username, quizId, score]);
   return respond({ status: 'success', message: 'Skor berhasil disimpan' });
+}
+
+function handleGetAllResults(e) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usersSheet = ss.getSheetByName('users');
+  const resultsSheet = ss.getSheetByName('result');
+  
+  if (!usersSheet || !resultsSheet) {
+    return respond({ status: 'error', message: 'Sheet "users" atau "result" tidak ditemukan' });
+  }
+  
+  const usersData = usersSheet.getDataRange().getValues();
+  const resultsData = resultsSheet.getDataRange().getValues();
+  
+  const students = [];
+  for (let i = 1; i < usersData.length; i++) {
+    const role = usersData[i][5] || 'student';
+    if (role === 'student') {
+      students.push({
+        name: usersData[i][1],
+        kelas: usersData[i][2],
+        username: usersData[i][3]
+      });
+    }
+  }
+  
+  const scores = [];
+  for (let j = 1; j < resultsData.length; j++) {
+    scores.push({
+      username: resultsData[j][1],
+      quiz_id: resultsData[j][2],
+      score: resultsData[j][3],
+      timestamp: resultsData[j][0]
+    });
+  }
+  
+  return respond({
+    status: 'success',
+    data: {
+      students: students,
+      scores: scores
+    }
+  });
 }
 
 function respond(data) {
