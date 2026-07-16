@@ -13,6 +13,10 @@ function doPost(e) {
       return handleSubmitScore(e);
     } else if (action === 'get_all_results') {
       return handleGetAllResults(e);
+    } else if (action === 'save_progress') {
+      return handleSaveProgress(e);
+    } else if (action === 'get_progress') {
+      return handleLoadProgress(e);
     }
     
     return respond({ status: 'error', message: 'Action not found' });
@@ -121,6 +125,50 @@ function handleGetAllResults(e) {
   });
 }
 
+function handleSaveProgress(e) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrCreate(ss, 'progress');
+  
+  const username = e.parameter.username;
+  const quizId = e.parameter.quiz_id;
+  const stateStr = e.parameter.state;
+  
+  const data = sheet.getDataRange().getValues();
+  let foundIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1] == username && data[i][2] == quizId) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+  
+  if (foundIndex > -1) {
+    sheet.getRange(foundIndex, 1).setValue(new Date());
+    sheet.getRange(foundIndex, 4).setValue(stateStr);
+  } else {
+    sheet.appendRow([new Date(), username, quizId, stateStr]);
+  }
+  
+  return respond({ status: 'success', message: 'Progres berhasil disimpan' });
+}
+
+function handleLoadProgress(e) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrCreate(ss, 'progress');
+  
+  const username = e.parameter.username;
+  const quizId = e.parameter.quiz_id;
+  
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1] == username && data[i][2] == quizId) {
+      return respond({ status: 'success', data: data[i][3] });
+    }
+  }
+  
+  return respond({ status: 'success', data: null, message: 'Tidak ada progres' });
+}
+
 function getSheetOrCreate(ss, sheetName) {
   let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
@@ -129,6 +177,8 @@ function getSheetOrCreate(ss, sheetName) {
       sheet.appendRow(['Timestamp', 'Name', 'Kelas', 'Username', 'Password', 'Role']);
     } else if (sheetName === 'result') {
       sheet.appendRow(['Timestamp', 'Username', 'Quiz_ID', 'Score']);
+    } else if (sheetName === 'progress') {
+      sheet.appendRow(['Timestamp', 'Username', 'Quiz_ID', 'State_JSON']);
     }
   }
   return sheet;

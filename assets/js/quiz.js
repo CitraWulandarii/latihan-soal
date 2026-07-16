@@ -118,6 +118,19 @@ function updateTop() {
   $('progBar').style.width = (answered() / getQUIZ().length * 100) + '%';
 }
 
+function saveProgressToGAS() {
+  const username = localStorage.getItem('citra_username');
+  const gasUrl = getGasUrl;
+  if (username && gasUrl && gasUrl !== GAS_URL_DEFAULT) {
+    const formData = new URLSearchParams();
+    formData.append('action', 'save_progress');
+    formData.append('username', username);
+    formData.append('quiz_id', window.currentQuizId || document.title);
+    formData.append('state', JSON.stringify(getState()));
+    fetch(gasUrl, { method: 'POST', body: formData }).catch(e => console.error('Gagal simpan progres', e));
+  }
+}
+
 function submit() {
   const S = getState()[getCur()];
   if (S.sel === null || S.sub) return;
@@ -126,6 +139,8 @@ function submit() {
   const chip = $('scoreChip');
   chip.classList.add('bump');
   setTimeout(() => chip.classList.remove('bump'), 320);
+
+  saveProgressToGAS();
 }
 
 $('btnExp').onclick = () => $('expBody').classList.toggle('open');

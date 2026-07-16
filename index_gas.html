@@ -310,6 +310,7 @@
   <script>
     let getGasUrl = "<?= gasUrl ?>";
     const GAS_URL_KEY = 'citra_gas_url';
+    const GAS_URL_DEFAULT = '';
     if (getGasUrl.includes("<" + "?=")) {
       getGasUrl = localStorage.getItem(GAS_URL_KEY) || "";
     }

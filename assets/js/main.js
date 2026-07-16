@@ -67,8 +67,8 @@ function renderDashboard() {
       <div class="quiz-title">${quiz.label}</div>
       <div class="quiz-desc">${quiz.desc}</div>
     `;
-    card.addEventListener('click', () => loadQuiz(quiz.id));
-    card.addEventListener('keydown', e => { if (e.key === 'Enter') loadQuiz(quiz.id); });
+    card.addEventListener('click', () => loadQuiz(quiz.id, card));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') loadQuiz(quiz.id, card); });
     grid.appendChild(card);
   });
 }
@@ -76,8 +76,17 @@ function renderDashboard() {
 // ─── Quiz Loader ─────────────────────────────────────────────────────────────
 let quizModule = null;
 
-async function loadQuiz(id) {
+async function loadQuiz(id, cardElement = null) {
   try {
+    if (cardElement) {
+      cardElement.style.opacity = '0.5';
+      cardElement.style.pointerEvents = 'none';
+      const titleEl = cardElement.querySelector('.quiz-title');
+      if (titleEl) {
+        titleEl.dataset.orig = titleEl.textContent;
+        titleEl.textContent = 'Memuat...';
+      }
+    }
     // Dynamically import the quiz data module
     quizModule = await import(`./data/${id}.js`);
 
@@ -92,13 +101,49 @@ async function loadQuiz(id) {
     // Update page title
     document.title = quizModule.title || 'Kuis Kimia';
 
+    // Fetch progress from GAS if logged in
+    let savedState = null;
+    const username = localStorage.getItem('citra_username');
+    const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : localStorage.getItem('citra_gas_url');
+    
+    // GAS_URL_DEFAULT in index.html is mapped to getGasUrl check
+    if (username && gasUrl && (!window.GAS_URL_DEFAULT || gasUrl !== window.GAS_URL_DEFAULT)) {
+      try {
+        const formData = new URLSearchParams();
+        formData.append('action', 'get_progress');
+        formData.append('username', username);
+        formData.append('quiz_id', id);
+        
+        const res = await fetch(gasUrl, { method: 'POST', body: formData });
+        const json = await res.json();
+        if (json.status === 'success' && json.data) {
+          savedState = JSON.parse(json.data);
+        }
+      } catch (err) {
+        console.error('Gagal memuat progres:', err);
+      }
+    }
+
+    if (cardElement) {
+      cardElement.style.opacity = '1';
+      cardElement.style.pointerEvents = 'auto';
+      const titleEl = cardElement.querySelector('.quiz-title');
+      if (titleEl && titleEl.dataset.orig) titleEl.textContent = titleEl.dataset.orig;
+    }
+
     // Show quiz screen
     showScreen('quiz-screen');
 
     // Init the quiz engine
-    initQuizEngine();
+    initQuizEngine(savedState);
 
   } catch (err) {
+    if (cardElement) {
+      cardElement.style.opacity = '1';
+      cardElement.style.pointerEvents = 'auto';
+      const titleEl = cardElement.querySelector('.quiz-title');
+      if (titleEl && titleEl.dataset.orig) titleEl.textContent = titleEl.dataset.orig;
+    }
     console.error('Gagal memuat kuis:', err);
     alert('Kuis tidak bisa dimuat. Coba lagi.');
   }
@@ -116,9 +161,16 @@ function applyTheme(themeVars) {
 }
 
 // ─── Quiz Engine (quiz.js logic wired here) ──────────────────────────────────
-function initQuizEngine() {
-  window._quizCur = 0;
-  window._quizState = window.QUIZ.map(() => ({ sel: null, sub: false }));
+function initQuizEngine(savedState = null) {
+  if (savedState && Array.isArray(savedState)) {
+    window._quizState = savedState;
+    // Find first unanswered
+    const firstUnanswered = window._quizState.findIndex(s => !s.sub);
+    window._quizCur = firstUnanswered === -1 ? 0 : firstUnanswered;
+  } else {
+    window._quizCur = 0;
+    window._quizState = window.QUIZ.map(() => ({ sel: null, sub: false }));
+  }
   quizShowScreen('screen-start');
   buildNav();
 }
