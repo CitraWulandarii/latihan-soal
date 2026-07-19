@@ -236,6 +236,13 @@ function initQuizEngine(savedState = null) {
     window._quizCur = 0;
     window._quizState = window.QUIZ.map((_, i) => ({ no: i + 1, sel: null, sub: false }));
   }
+
+  // Update total question count in the UI
+  const totalQ = window.QUIZ ? window.QUIZ.length : 0;
+  document.querySelectorAll('.quiz-total-q').forEach(el => {
+    el.textContent = totalQ;
+  });
+
   quizShowScreen('screen-start');
   buildNav();
 }

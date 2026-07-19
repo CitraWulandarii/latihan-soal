@@ -18,12 +18,17 @@ const getCur = () => window._quizCur || 0;
 const setCur = v => { window._quizCur = v; };
 const getState = () => window._quizState || [];
 
-const score = () => getState().reduce((s, a, i) => {
-  const Q = getQUIZ()[i];
-  if (!Q) return s;
-  const ans = Q.a !== undefined ? Q.a : Q.c;
-  return s + (a.sub && a.sel === ans ? 10 : 0);
-}, 0);
+const score = () => {
+  const totalQ = getQUIZ().length;
+  if (totalQ === 0) return 0;
+  const correct = getState().reduce((s, a, i) => {
+    const Q = getQUIZ()[i];
+    if (!Q) return s;
+    const ans = Q.a !== undefined ? Q.a : Q.c;
+    return s + (a.sub && a.sel === ans ? 1 : 0);
+  }, 0);
+  return Math.round((correct / totalQ) * 100);
+};
 const answered = () => getState().filter(a => a.sub).length;
 
 // ─── Nav ─────────────────────────────────────────────────────────────────────
@@ -94,7 +99,8 @@ function render() {
     fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
     $('fbIcon').innerHTML = ok ? CHECK : CROSS;
     $('fbTitle').textContent = ok ? 'Jawaban Benar 🎉' : 'Jawaban Salah';
-    $('fbSub').innerHTML = ok ? 'Skor +10 poin!' : 'Jawaban yang benar: <em>' + LETT[qA] + '. ' + qO[qA] + '</em>';
+    const pts = (100 / getQUIZ().length).toFixed(1).replace('.0', '');
+    $('fbSub').innerHTML = ok ? 'Skor +' + pts + ' poin!' : 'Jawaban yang benar: <em>' + LETT[qA] + '. ' + qO[qA] + '</em>';
     et.classList.add('show');
     $('expBody').innerHTML = '<div class="exp-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="#d35c06" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg>Pembahasan</h4><p>' + qE + '</p><div class="keybox"><span class="kicon"><svg viewBox="0 0 24 24" fill="none" stroke="#8a5300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.9H22l-5.8 4.3 2.2 7L12 16.9 5.6 20.2l2.2-7L2 8.9h7.6Z"/></svg></span><div><b>Konsep Penting</b><span>' + qK + '</span></div></div></div>';
     $('expBody').classList.remove('open');
@@ -160,13 +166,17 @@ $('btnFinish').onclick = showResult;
 // ─── Result ──────────────────────────────────────────────────────────────────
 function showResult() {
   showQuizScreen('screen-result');
-  const sc = score();
-  const correct = sc / 10;
-  const wrong = getQUIZ().length - correct;
+  const totalQ = getQUIZ().length;
+  const correct = getState().filter((a, i) => {
+    const Q = getQUIZ()[i];
+    return Q && a.sub && a.sel === (Q.a !== undefined ? Q.a : Q.c);
+  }).length;
+  const wrong = totalQ - correct;
+  const sc = totalQ > 0 ? Math.round((correct / totalQ) * 100) : 0;
 
   $('resCorrect').textContent = correct;
   $('resWrong').textContent = wrong;
-  $('resPct').textContent = Math.round(correct / getQUIZ().length * 100) + '%';
+  $('resPct').textContent = (totalQ > 0 ? Math.round(correct / totalQ * 100) : 0) + '%';
 
   const bar = $('dialBar'), C = 2 * Math.PI * 85;
   bar.style.strokeDasharray = C;
