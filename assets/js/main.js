@@ -159,6 +159,7 @@ async function loadQuiz(id, cardElement = null) {
 
     // Update page title
     document.title = quizModule.title || 'Kuis Kimia';
+    window.isAdminView = false;
 
     // Fetch progress from GAS if logged in
     let savedState = null;
@@ -322,7 +323,8 @@ function renderAdminTable(students, scores) {
       const sc = scoreMap[student.username]?.[qId];
       if (sc === undefined) return `<td><span class="score-badge empty">-</span></td>`;
       let cls = sc >= 90 ? 'perfect' : sc >= 70 ? 'good' : 'fair';
-      return `<td><span class="score-badge ${cls}">${sc}</span></td>`;
+      // Buat badge clickable untuk admin
+      return `<td><span class="score-badge ${cls} score-badge-btn" style="cursor:pointer;" data-username="${student.username}" data-name="${student.name}" data-quiz="${qId}" title="Lihat progres ${student.name} — ${QUIZ_LIST.find(q=>q.id===qId)?.label||qId}">${sc}</span></td>`;
     }).join('');
 
     return `<tr>
@@ -332,6 +334,190 @@ function renderAdminTable(students, scores) {
       ${cells}
     </tr>`;
   }).join('');
+
+  // Pasang event listener pada semua badge yang bisa diklik
+  tbody.querySelectorAll('.score-badge-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      showStudentProgressModal(
+        btn.dataset.username,
+        btn.dataset.name,
+        btn.dataset.quiz
+      );
+    });
+  });
+}
+
+
+// ─── Admin: Student Progress Modal ───────────────────────────────────────────────────────────────
+async function showStudentProgressModal(username, studentName, quizId) {
+  const modal = $('admin-progress-modal');
+  const modalTitle = $('apm-title');
+  const modalBody = $('apm-body');
+  if (!modal) return;
+
+  const quizInfo = typeof QUIZ_LIST !== 'undefined' ? QUIZ_LIST.find(q => q.id === quizId) : null;
+  modalTitle.textContent = `${studentName} — ${quizInfo?.label || quizId}`;
+  modalBody.innerHTML = `<div style="text-align:center;padding:32px"><span class="spinner" style="display:inline-block;border-color:var(--pri-500);border-bottom-color:transparent;width:28px;height:28px;"></span><p style="margin-top:12px;color:var(--ink-soft);font-weight:600;">Memuat data...</p></div>`;
+  modal.classList.add('open');
+
+  try {
+    // 1) Load soal data
+    const quizMod = await import(`./data/${quizId}.js`);
+    const questions = quizMod.QUIZ;
+
+    // 2) Fetch progress siswa dari GAS
+    let stateArr = null;
+    const gasUrl = localStorage.getItem('citra_gas_url') || (typeof getGasUrl !== 'undefined' ? getGasUrl : window.GAS_URL_DEFAULT);
+
+    if (gasUrl && (!window.GAS_URL_DEFAULT || gasUrl !== window.GAS_URL_DEFAULT)) {
+      const fd = new URLSearchParams();
+      fd.append('action', 'get_student_progress');
+      fd.append('username', username);
+      fd.append('quiz_id', quizId);
+      const res = await fetch(gasUrl, { method: 'POST', body: fd });
+      const json = await res.json();
+      if (json.status === 'success' && json.data && json.data[quizId]) {
+        stateArr = JSON.parse(json.data[quizId]);
+      }
+    } else {
+      // Dev mode: tampilkan contoh progress
+      stateArr = questions.map((_, i) => ({
+        no: i + 1,
+        sel: i % 3 === 0 ? null : (i % 2 === 0 ? questions[i].a : (questions[i].a + 1) % questions[i].o.length),
+        sub: i % 3 !== 0
+      }));
+    }
+
+    // 3) Render kartu tiap soal
+    if (!stateArr) {
+      modalBody.innerHTML = `<p style="text-align:center;padding:24px;color:var(--ink-soft);font-weight:600;">Belum ada data progres untuk latihan ini.</p>`;
+      return;
+    }
+
+    const answered = stateArr.filter(s => s.sub).length;
+    const correct = stateArr.filter(s => s.sub && s.sel === questions[s.no - 1]?.a).length;
+    const wrong = answered - correct;
+    const total = questions.length;
+    const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+
+    const summaryHtml = `
+      <div class="apm-summary">
+        <div class="apm-stat-chip apm-chip-done">
+          <b>${answered}/${total}</b><span>Dijawab</span>
+        </div>
+        <div class="apm-stat-chip apm-chip-correct">
+          <b>${correct}</b><span>Benar</span>
+        </div>
+        <div class="apm-stat-chip apm-chip-wrong">
+          <b>${wrong}</b><span>Salah</span>
+        </div>
+        <div class="apm-stat-chip" style="background:#f0f4ff;color:#2b70c8;border-color:#c2defb">
+          <b>${pct}%</b><span>Progres</span>
+        </div>
+      </div>
+      <div style="background:var(--gray-chip);border-radius:10px;height:8px;overflow:hidden;margin-bottom:18px;">
+        <div style="background:var(--green);height:100%;width:${pct}%;transition:width .5s ease;"></div>
+      </div>`;
+
+    const cardsHtml = stateArr.map((s) => {
+      const q = questions[s.no - 1];   // gunakan s.no bukan index loop
+      if (!q) return '';
+      if (!s.sub || s.sel === null || s.sel === undefined) {
+        // Belum dijawab
+        return `<div class="apm-qcard apm-unanswered">
+          <div class="apm-qnum">Soal ${s.no}</div>
+          <div class="apm-qtext">${q.q}</div>
+          <div class="apm-status-label" style="color:var(--muted);">&#8212; Belum dijawab</div>
+        </div>`;
+      }
+      const opts = q.o || q.opts || q.options || [];   // defensive: support different key names
+      const correctIdx = q.a ?? q.answer ?? 0;
+      const isCorrect = s.sel === correctIdx;
+      const statusIcon = isCorrect ? '&#10003;' : '&#10007;';
+      const statusColor = isCorrect ? 'var(--green)' : 'var(--red)';
+      const answerLetters = ['A','B','C','D','E'];
+      const selText  = opts[s.sel]      !== undefined ? opts[s.sel]      : '-';
+      const keyText  = opts[correctIdx] !== undefined ? opts[correctIdx] : '-';
+      const selLetter = answerLetters[s.sel]      || '?';
+      const keyLetter = answerLetters[correctIdx] || '?';
+      return `<div class="apm-qcard ${isCorrect ? 'apm-correct' : 'apm-wrong'}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
+          <div class="apm-qnum">Soal ${s.no}</div>
+          <span style="font-size:18px;font-weight:900;color:${statusColor};">${statusIcon}</span>
+        </div>
+        <div class="apm-qtext">${q.q}</div>
+        <div class="apm-answers">
+          <div class="apm-ans-row">
+            <span class="apm-ans-label">Jawaban:</span>
+            <span class="apm-ans-val ${isCorrect ? 'apm-val-correct' : 'apm-val-wrong'}">${selLetter}. ${selText}</span>
+          </div>
+          ${!isCorrect ? `<div class="apm-ans-row">
+            <span class="apm-ans-label">Kunci:</span>
+            <span class="apm-ans-val apm-val-key">${keyLetter}. ${keyText}</span>
+          </div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    const actionHtml = `
+      <div style="text-align: center; margin-top: 24px;">
+        <button id="apm-btn-view" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">
+          Lihat Kuis secara Lengkap
+        </button>
+      </div>`;
+
+    modalBody.innerHTML = summaryHtml + `<div class="apm-cards">${cardsHtml}</div>` + actionHtml;
+
+    const btnView = $('apm-btn-view');
+    if (btnView) {
+      btnView.addEventListener('click', () => {
+        modal.classList.remove('open');
+        loadAdminQuizView(quizId, stateArr, studentName);
+      });
+    }
+
+  } catch (err) {
+    console.error(err);
+    modalBody.innerHTML = `<p style="text-align:center;padding:24px;color:var(--red);font-weight:600;">Gagal memuat data progres.</p>`;
+  }
+}
+
+// ─── Admin Quiz View ─────────────────────────────────────────────────────────
+async function loadAdminQuizView(id, stateArr, studentName) {
+  try {
+    const quizMod = await import(`./data/${id}.js`);
+    applyTheme(quizMod.theme);
+
+    window.QUIZ = quizMod.QUIZ;
+    window.currentQuizId = id;
+    window.isAdminView = true;
+
+    showScreen('quiz-screen');
+
+    // Prepare state for admin view
+    window._quizState = stateArr;
+    window._quizCur = 0;
+    
+    quizShowScreen('screen-quiz'); // skip screen-start
+    if (typeof buildNav === 'function') buildNav();
+    if (typeof window._quizRender === 'function') window._quizRender();
+
+    // Change finish button behavior
+    const btnFinish = document.getElementById('btnFinish');
+    if (btnFinish) {
+      btnFinish.textContent = 'Kembali ke Admin';
+      btnFinish.onclick = () => {
+        window.isAdminView = false;
+        // Restore original finish button behavior
+        btnFinish.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Lihat Hasil Akhir`;
+        if (typeof showResult === 'function') btnFinish.onclick = showResult;
+        showScreen('admin-screen');
+      };
+    }
+  } catch (err) {
+    console.error('Gagal memuat kuis admin:', err);
+    alert('Kuis tidak bisa dimuat.');
+  }
 }
 
 // ─── Logout ──────────────────────────────────────────────────────────────────
@@ -372,6 +558,24 @@ window.backToDashboard = function() {
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Inject admin progress modal HTML terlebih dahulu
+  const modalEl = document.createElement('div');
+  modalEl.id = 'admin-progress-modal';
+  modalEl.className = 'modal-overlay';
+  modalEl.innerHTML = `
+    <div class="modal-card apm-card">
+      <div class="apm-header">
+        <h3 id="apm-title">Progress Siswa</h3>
+        <button id="apm-close" class="apm-close-btn" title="Tutup">&times;</button>
+      </div>
+      <div id="apm-body" class="apm-body"></div>
+    </div>`;
+  document.body.appendChild(modalEl);
+  modalEl.addEventListener('click', e => { if (e.target === modalEl) modalEl.classList.remove('open'); });
+  modalEl.querySelector('#apm-close').addEventListener('click', () => modalEl.classList.remove('open'));
+
+
   // Logout button
   const logoutBtn = $('btn-logout');
   if (logoutBtn) logoutBtn.addEventListener('click', logout);
@@ -380,7 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const refreshBtn = $('btn-refresh-admin');
   if (refreshBtn) refreshBtn.addEventListener('click', loadAdminData);
 
-  // Dashboard Nav button (student only)
   const navDashboardBtn = $('btn-nav-dashboard');
   if (navDashboardBtn) {
     navDashboardBtn.addEventListener('click', () => {

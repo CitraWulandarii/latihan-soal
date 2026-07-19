@@ -19,6 +19,8 @@ function doPost(e) {
       return handleLoadProgress(e);
     } else if (action === 'get_user_progress') {
       return handleGetUserProgress(e);
+    } else if (action === 'get_student_progress') {
+      return handleGetStudentProgress(e);
     }
     
     return respond({ status: 'error', message: 'Action not found' });
@@ -206,6 +208,28 @@ function handleGetUserProgress(e) {
   
   return respond({ status: 'success', data: progressMap });
 }
+
+/**
+ * Ambil seluruh progress quiz seorang siswa — digunakan oleh admin.
+ * Return: { soal_1: stateJSON, soal_2: stateJSON, ... }
+ */
+function handleGetStudentProgress(e) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrCreate(ss, 'progress');
+
+  const username = e.parameter.username; // username siswa yang dilihat admin
+  const data = sheet.getDataRange().getValues();
+
+  const progressMap = {};
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1] == username) {
+      progressMap[data[i][2]] = data[i][3]; // quiz_id → stateJSON
+    }
+  }
+
+  return respond({ status: 'success', data: progressMap });
+}
+
 
 function getSheetOrCreate(ss, sheetName) {
   let sheet = ss.getSheetByName(sheetName);

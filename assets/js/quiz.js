@@ -73,10 +73,10 @@ function render() {
     o.className = 'opt';
     o.innerHTML = '<span class="lett">' + LETT[i] + '</span><span class="otxt">' + txt + '</span>' + MK_OK + MK_NO;
     if (!S.sub && S.sel === i) o.classList.add('selected');
-    if (S.sub) {
+    if (S.sub || window.isAdminView) {
       o.classList.add('locked');
       if (i === qA) o.classList.add('correct');
-      else if (i === S.sel) o.classList.add('wrong');
+      else if (i === S.sel && S.sel !== null) o.classList.add('wrong');
     } else {
       o.onclick = () => { S.sel = i; render(); };
     }
@@ -84,9 +84,9 @@ function render() {
   });
 
   const sub = $('btnSubmit');
-  sub.disabled = S.sub || S.sel === null;
-  sub.textContent = S.sub ? 'SUDAH DIJAWAB' : 'SUBMIT';
-  sub.onclick = submit;
+  sub.disabled = S.sub || S.sel === null || window.isAdminView;
+  sub.textContent = S.sub ? 'SUDAH DIJAWAB' : (window.isAdminView ? 'MODE ADMIN' : 'SUBMIT');
+  sub.onclick = window.isAdminView ? null : submit;
 
   const fb = $('feedback'), et = $('expToggle');
   if (S.sub) {
@@ -106,7 +106,7 @@ function render() {
 
   $('btnBack').disabled = cur === 0;
   $('btnNext').disabled = cur === getQUIZ().length - 1;
-  $('finishWrap').classList.toggle('show', answered() === getQUIZ().length);
+  $('finishWrap').classList.toggle('show', answered() === getQUIZ().length || window.isAdminView);
   refreshNav();
   updateTop();
 }
@@ -132,6 +132,7 @@ function saveProgressToGAS() {
 }
 
 function submit() {
+  if (window.isAdminView) return;
   const S = getState()[getCur()];
   if (S.sel === null || S.sub) return;
   S.sub = true;
