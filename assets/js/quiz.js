@@ -228,7 +228,7 @@ function buildRecap() {
 
 $('btnRestart').onclick = () => {
   window._quizCur = 0;
-  window._quizState = getQUIZ().map(() => ({ sel: null, sub: false }));
+  window._quizState = getQUIZ().map((_, i) => ({ no: i + 1, sel: null, sub: false }));
   const cv = $('confetti');
   if (cv) cv.style.display = 'none';
   showQuizScreen('screen-start');

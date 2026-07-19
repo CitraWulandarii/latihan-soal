@@ -1,4 +1,4 @@
-export const title = "Latihan Soal Tata Nama Senyawa Kovalen Biner";
+export const title = "Kuis Tata Nama Senyawa Kovalen";
 
 export const theme = `--pri-50:#fff8f0; --pri-100:#ffeeda; --pri-150:#ffe2c2; --pri-200:#ffd0a0;
   --pri-300:#ffb574; --pri-400:#ff9a45; --pri-500:#fb852a; --pri-600:#ef6d10; --pri-700:#d35c06;

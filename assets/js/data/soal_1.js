@@ -1,4 +1,4 @@
-export const title = "Kuis Tata Nama Senyawa Biner";
+export const title = "Kuis Tata Nama Senyawa Ionik";
 
 export const theme = `--pri-50:#e9f6ee; --pri-100:#dcefE2; --pri-150:#cfe7d6; --pri-200:#b7e4c7;
   --pri-300:#83c59e; --pri-400:#59b583; --pri-500:#2fa36b; --pri-600:#1e7a4e; --pri-700:#173f2c;

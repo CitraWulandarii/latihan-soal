@@ -6,12 +6,12 @@
 
 // ─── Quiz Registry ───────────────────────────────────────────────────────────
 const QUIZ_LIST = [
-  { id: 'soal_1', label: 'Latihan 1', desc: 'Tata Nama Senyawa Kovalen Biner' },
-  { id: 'soal_2', label: 'Latihan 2', desc: 'Tata Nama Senyawa Kovalen Biner' },
-  { id: 'soal_3', label: 'Latihan 3', desc: 'Tata Nama Senyawa Kovalen Biner' },
-  { id: 'soal_4', label: 'Latihan 4', desc: 'Tata Nama Senyawa Kovalen Biner' },
-  { id: 'soal_5', label: 'Latihan 5', desc: 'Tata Nama Senyawa Kovalen Biner' },
-  { id: 'soal_6', label: 'Latihan 6', desc: 'Tata Nama Senyawa Kovalen Biner' },
+  { id: 'soal_1', label: 'Latihan 1', desc: 'Tata Nama Senyawa Ionik' },
+  { id: 'soal_2', label: 'Latihan 2', desc: 'Tata Nama Senyawa Kovalen' },
+  { id: 'soal_3', label: 'Latihan 3', desc: 'Tata Nama Senyawa Poliatomik' },
+  { id: 'soal_4', label: 'Latihan 4', desc: 'Tata Nama Senyawa Asam' },
+  { id: 'soal_5', label: 'Latihan 5', desc: 'Tata Nama Senyawa Basa' },
+  { id: 'soal_6', label: 'Latihan 6', desc: 'Tata Nama Senyawa Anorganik' },
 ];
 
 // ─── DOM Helpers ─────────────────────────────────────────────────────────────
@@ -48,12 +48,70 @@ function setHeaderNav(role) {
 }
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────
-function renderDashboard() {
+async function renderDashboard() {
   const grid = $('quiz-grid');
   if (!grid) return;
+  
+  // Show loading animation
+  grid.innerHTML = '<div style="text-align:center; padding: 40px; grid-column: 1/-1;"><span class="spinner" style="display:inline-block; border-color:var(--green); border-bottom-color:transparent; width:30px; height:30px; margin-bottom:15px;"></span><br><div style="color:var(--ink-soft); font-weight:bold;">Memuat progres kuis...</div></div>';
+  
+  // Disable clicks while loading
+  grid.style.pointerEvents = 'none';
+  grid.style.opacity = '0.7';
+
+  let userProgress = {};
+  const gasUrl = localStorage.getItem('citra_gas_url') || (typeof getGasUrl !== 'undefined' ? getGasUrl : window.GAS_URL_DEFAULT);
+  const username = localStorage.getItem('citra_username');
+
+  // Fetch progress if not in dev mode
+  if (username && gasUrl && (!window.GAS_URL_DEFAULT || gasUrl !== window.GAS_URL_DEFAULT)) {
+    try {
+      const formData = new URLSearchParams();
+      formData.append('action', 'get_user_progress');
+      formData.append('username', username);
+      
+      const res = await fetch(gasUrl, { method: 'POST', body: formData });
+      const json = await res.json();
+      if (json.status === 'success' && json.data) {
+        userProgress = json.data;
+      }
+    } catch (err) {
+      console.error('Gagal memuat progres dashboard:', err);
+    }
+  }
+
+  // Clear loading and restore pointer events
+  grid.style.pointerEvents = 'auto';
+  grid.style.opacity = '1';
   grid.innerHTML = '';
 
   QUIZ_LIST.forEach((quiz, idx) => {
+    let progressHtml = '';
+    
+    // Check if we have progress for this quiz
+    if (userProgress[quiz.id]) {
+      try {
+        const state = JSON.parse(userProgress[quiz.id]);
+        const total = state.length;
+        const answered = state.filter(s => s.sub).length;
+        
+        if (total > 0 && answered > 0) {
+          const pct = Math.round((answered / total) * 100);
+          progressHtml = `
+            <div style="margin-top:12px; font-size:12px; color:var(--ink-soft); width:100%;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-weight:600;">
+                <span>Progres: ${answered}/${total}</span>
+                <span style="color:var(--green)">${pct}%</span>
+              </div>
+              <div style="background:var(--gray-chip); border-radius:10px; height:6px; overflow:hidden;">
+                <div style="background:var(--green); height:100%; width:${pct}%; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          `;
+        }
+      } catch(e) {}
+    }
+
     const card = document.createElement('div');
     card.className = 'quiz-card';
     card.setAttribute('role', 'button');
@@ -66,6 +124,7 @@ function renderDashboard() {
       </div>
       <div class="quiz-title">${quiz.label}</div>
       <div class="quiz-desc">${quiz.desc}</div>
+      ${progressHtml}
     `;
     card.addEventListener('click', () => loadQuiz(quiz.id, card));
     card.addEventListener('keydown', e => { if (e.key === 'Enter') loadQuiz(quiz.id, card); });
@@ -169,7 +228,7 @@ function initQuizEngine(savedState = null) {
     window._quizCur = firstUnanswered === -1 ? 0 : firstUnanswered;
   } else {
     window._quizCur = 0;
-    window._quizState = window.QUIZ.map(() => ({ sel: null, sub: false }));
+    window._quizState = window.QUIZ.map((_, i) => ({ no: i + 1, sel: null, sub: false }));
   }
   quizShowScreen('screen-start');
   buildNav();
@@ -306,6 +365,7 @@ window.onLoginSuccess = function(userData) {
 // Back to dashboard from quiz result
 window.backToDashboard = function() {
   showScreen('dashboard-screen');
+  renderDashboard();
   const cv = $('confetti');
   if (cv) cv.style.display = 'none';
 };

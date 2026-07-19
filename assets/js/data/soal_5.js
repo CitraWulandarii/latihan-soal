@@ -1,4 +1,4 @@
-export const title = "Latihan Soal Tata Nama Senyawa Basa";
+export const title = "Kuis Tata Nama Senyawa Basa";
 
 export const theme = `--pri-50:#fffdf3; --pri-100:#fff8de; --pri-150:#fff2c4; --pri-200:#ffe9a0;
   --pri-300:#ffd866; --gold:#f5a623; --gold-deep:#e08a0b;

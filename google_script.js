@@ -17,6 +17,8 @@ function doPost(e) {
       return handleSaveProgress(e);
     } else if (action === 'get_progress') {
       return handleLoadProgress(e);
+    } else if (action === 'get_user_progress') {
+      return handleGetUserProgress(e);
     }
     
     return respond({ status: 'error', message: 'Action not found' });
@@ -167,6 +169,26 @@ function handleLoadProgress(e) {
   }
   
   return respond({ status: 'success', data: null, message: 'Tidak ada progres' });
+}
+
+function handleGetUserProgress(e) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrCreate(ss, 'progress');
+  
+  const username = e.parameter.username;
+  const data = sheet.getDataRange().getValues();
+  
+  const progressMap = {};
+  // Skip header row
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1] == username) {
+      const quizId = data[i][2];
+      const stateStr = data[i][3];
+      progressMap[quizId] = stateStr;
+    }
+  }
+  
+  return respond({ status: 'success', data: progressMap });
 }
 
 function getSheetOrCreate(ss, sheetName) {
