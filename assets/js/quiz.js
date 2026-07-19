@@ -120,8 +120,8 @@ function updateTop() {
 
 function saveProgressToGAS() {
   const username = localStorage.getItem('citra_username');
-  const gasUrl = getGasUrl;
-  if (username && gasUrl && gasUrl !== GAS_URL_DEFAULT) {
+  const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : '';
+  if (username && gasUrl) {
     const formData = new URLSearchParams();
     formData.append('action', 'save_progress');
     formData.append('username', username);
@@ -193,8 +193,8 @@ function showResult() {
 
   // ── Save score to GAS in background ──────────────────────────────────────
   const username = localStorage.getItem('citra_username');
-  const gasUrl = getGasUrl;
-  if (username && gasUrl !== GAS_URL_DEFAULT) {
+  const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : '';
+  if (username && gasUrl) {
     const formData = new URLSearchParams();
     formData.append('action', 'submit_score');
     formData.append('username', username);

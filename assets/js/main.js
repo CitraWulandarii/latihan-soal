@@ -60,11 +60,11 @@ async function renderDashboard() {
   grid.style.opacity = '0.7';
 
   let userProgress = {};
-  const gasUrl = localStorage.getItem('citra_gas_url') || (typeof getGasUrl !== 'undefined' ? getGasUrl : window.GAS_URL_DEFAULT);
+  const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : '';
   const username = localStorage.getItem('citra_username');
 
   // Fetch progress if not in dev mode
-  if (username && gasUrl && (!window.GAS_URL_DEFAULT || gasUrl !== window.GAS_URL_DEFAULT)) {
+  if (username && gasUrl) {
     try {
       const formData = new URLSearchParams();
       formData.append('action', 'get_user_progress');
@@ -164,10 +164,9 @@ async function loadQuiz(id, cardElement = null) {
     // Fetch progress from GAS if logged in
     let savedState = null;
     const username = localStorage.getItem('citra_username');
-    const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : localStorage.getItem('citra_gas_url');
+    const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : '';
     
-    // GAS_URL_DEFAULT in index.html is mapped to getGasUrl check
-    if (username && gasUrl && (!window.GAS_URL_DEFAULT || gasUrl !== window.GAS_URL_DEFAULT)) {
+    if (username && gasUrl) {
       try {
         const formData = new URLSearchParams();
         formData.append('action', 'get_progress');
@@ -261,9 +260,9 @@ async function loadAdminData() {
   if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--ink-soft)">Memuat data rekap...</td></tr>';
 
-  const gasUrl = localStorage.getItem('citra_gas_url') || GAS_URL_DEFAULT;
+  const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : '';
 
-  if (gasUrl === GAS_URL_DEFAULT) {
+  if (!gasUrl) {
     // Dev mode: render mock student data
     renderAdminTable([
       { name: 'Budi Santoso', kelas: 'X MIPA 1', username: 'budi' },
@@ -367,9 +366,9 @@ async function showStudentProgressModal(username, studentName, quizId) {
 
     // 2) Fetch progress siswa dari GAS
     let stateArr = null;
-    const gasUrl = localStorage.getItem('citra_gas_url') || (typeof getGasUrl !== 'undefined' ? getGasUrl : window.GAS_URL_DEFAULT);
+    const gasUrl = typeof getGasUrl !== 'undefined' ? getGasUrl : '';
 
-    if (gasUrl && (!window.GAS_URL_DEFAULT || gasUrl !== window.GAS_URL_DEFAULT)) {
+    if (gasUrl) {
       const fd = new URLSearchParams();
       fd.append('action', 'get_student_progress');
       fd.append('username', username);
