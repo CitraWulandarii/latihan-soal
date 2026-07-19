@@ -14,78 +14,115 @@ export const theme = `--pri-50:#fff8f0; --pri-100:#ffeeda; --pri-150:#ffe2c2; --
   --grad-warm:linear-gradient(135deg,#ffca5a,#ffab3a,#fb852a);`;
 
 export const QUIZ = [
- {
-  q:'Nama yang tepat untuk senyawa <span class="formula">SF<sub>4</sub></span> adalah…',
-  opt:['Sulfur fluorida','Sulfur tetrafluorida','Sulfur difluorida','Sulfur oksida','Sulfur tetraoksida'],
-  c:1,
-  exp:'<span class="formula">SF<sub>4</sub></span> adalah senyawa kovalen dari dua unsur nonlogam: sulfur (S) dan fluor (F). Sulfur berjumlah satu atom sehingga cukup disebut "sulfur" (tanpa awalan), sedangkan fluorin berjumlah empat atom sehingga diberi awalan <b>tetra-</b>. Unsur terakhir diberi akhiran <b>-ida</b>, maka namanya <b>sulfur tetrafluorida</b>.',
-  key:'Awalan Yunani sesuai jumlah atom; unsur pertama tanpa "mono-". tetra = 4.'
- },
- {
-  q:'Senyawa dengan rumus kimia <span class="formula">N<sub>2</sub>O<sub>4</sub></span> memiliki nama…',
-  opt:['Nitrogen oksida','Dinitrogen oksida','Dinitrogen tetraoksida','Nitrogen dioksida','Dinitrogen pentaoksida'],
-  c:2,
-  exp:'<span class="formula">N<sub>2</sub>O<sub>4</sub></span> tersusun dari nitrogen (N) dan oksigen (O), keduanya nonlogam. Nitrogen 2 atom → awalan <b>di-</b>; oksigen 4 atom → awalan <b>tetra-</b>; unsur terakhir berakhiran <b>-ida</b> → <b>dinitrogen tetraoksida</b>.',
-  key:'di = 2, tetra = 4 → dinitrogen tetraoksida.'
- },
- {
-  q:'Nama yang tepat untuk senyawa <span class="formula">P<sub>4</sub>O<sub>7</sub></span> adalah…',
-  opt:['Tetrafosfor heptaoksida','Fosfor oksida','Tetrafosfor oksida','Difosfor heptaoksida','Fosfor heptaoksida'],
-  c:0,
-  exp:'<span class="formula">P<sub>4</sub>O<sub>7</sub></span> tersusun dari fosfor (P) dan oksigen (O). Fosfor 4 atom → awalan <b>tetra-</b>; oksigen 7 atom → awalan <b>hepta-</b>; akhiran <b>-ida</b> pada unsur terakhir → <b>tetrafosfor heptaoksida</b>.',
-  key:'tetra = 4, hepta = 7.'
- },
- {
-  q:'Senyawa <span class="formula">NCl<sub>3</sub></span> tersusun atas unsur nonlogam dan nonlogam. Nama senyawa tersebut adalah…',
-  opt:['Nitrogen klorida','Nitrogen monoksida','Nitrogen diklorida','Mononitrogen klorida','Nitrogen triklorida'],
-  c:4,
-  exp:'<span class="formula">NCl<sub>3</sub></span> tersusun dari nitrogen (N) dan klorin (Cl). Nitrogen 1 atom → cukup "nitrogen" (tanpa mono-); klorin 3 atom → awalan <b>tri-</b>; akhiran <b>-ida</b> → <b>nitrogen triklorida</b>.',
-  key:'tri = 3; unsur pertama 1 atom tanpa "mono-".'
- },
- {
-  q:'Rumus kimia yang tepat untuk <b>karbon tetraklorida</b> adalah…',
-  opt:['CCl','CCl<sub>2</sub>','CCl<sub>3</sub>','CCl<sub>4</sub>','C<sub>2</sub>Cl<sub>4</sub>'],
-  optFormula:true,
-  c:3,
-  exp:'Karbon tetraklorida tersusun dari karbon (C) dan klorin (Cl). Awalan <b>tetra-</b> berarti empat, menunjukkan 4 atom klorin. Unsur pertama (karbon) tidak memakai awalan "mono-" sehingga berjumlah satu. Maka rumusnya <span class="formula">CCl<sub>4</sub></span>.',
-  key:'"tetra-" = 4 atom Cl, karbon = 1 → <span class="formula">CCl<sub>4</sub></span>.'
- },
- {
-  q:'<b>Disulfur diklorida</b> memiliki rumus kimia…',
-  opt:['SCl<sub>2</sub>','S<sub>2</sub>Cl','S<sub>2</sub>Cl<sub>2</sub>','SCl<sub>4</sub>','S<sub>2</sub>Cl<sub>4</sub>'],
-  optFormula:true,
-  c:2,
-  exp:'Disulfur diklorida tersusun dari sulfur (S) dan klorin (Cl). Awalan <b>di-</b> berarti dua: "disulfur" → 2 atom S, "diklorida" → 2 atom Cl. Maka rumusnya <span class="formula">S<sub>2</sub>Cl<sub>2</sub></span>.',
-  key:'di = 2 untuk kedua unsur → <span class="formula">S<sub>2</sub>Cl<sub>2</sub></span>.'
- },
- {
-  q:'Karakteristik yang tepat untuk senyawa <span class="formula">SF<sub>4</sub></span> adalah…',
-  opt:['Tersusun dari unsur logam dan nonlogam','Membentuk ikatan ion','Tersusun dari unsur-unsur nonlogam','Menghasilkan ion bebas dalam bentuk padat','Memiliki titik leleh sangat tinggi seperti senyawa ion'],
-  c:2,
-  exp:'<span class="formula">SF<sub>4</sub></span> tersusun dari sulfur (S) dan fluorin (F) yang keduanya nonlogam. Gabungan sesama unsur nonlogam umumnya membentuk <b>ikatan kovalen</b>. Karena itu SF<sub>4</sub> berkarakteristik sebagai senyawa dari unsur-unsur nonlogam.',
-  key:'Senyawa kovalen biner = gabungan dua unsur nonlogam.'
- },
- {
-  q:'Rumus kimia senyawa <b>nitrogen dioksida</b> adalah…',
-  opt:['NO','N<sub>2</sub>O','NO<sub>2</sub>','N<sub>2</sub>O<sub>2</sub>','NO<sub>3</sub>'],
-  optFormula:true,
-  c:2,
-  exp:'Nitrogen dioksida tersusun dari nitrogen (N) dan oksigen (O). Awalan "mono-" tidak dipakai pada unsur pertama, sehingga nitrogen cukup ditulis N (1 atom). Awalan <b>di-</b> pada "dioksida" menunjukkan 2 atom oksigen. Maka rumusnya <span class="formula">NO<sub>2</sub></span>.',
-  key:'"mono-" tak dipakai di unsur pertama; di = 2 → <span class="formula">NO<sub>2</sub></span>.'
- },
- {
-  q:'Senyawa <b>silikon tetraklorida</b> memiliki rumus kimia…',
-  opt:['SiCl','SiCl<sub>2</sub>','Si<sub>2</sub>Cl<sub>4</sub>','SiCl<sub>4</sub>','SiCl<sub>3</sub>'],
-  optFormula:true,
-  c:3,
-  exp:'Silikon tetraklorida tersusun dari silikon (Si) dan klorin (Cl). Awalan "mono-" tidak dituliskan pada unsur pertama → silikon 1 atom. Awalan <b>tetra-</b> berarti empat → 4 atom klorin. Maka rumusnya <span class="formula">SiCl<sub>4</sub></span>.',
-  key:'tetra = 4 → <span class="formula">SiCl<sub>4</sub></span>.'
- },
- {
-  q:'<b>Karbon disulfida</b> termasuk senyawa kovalen karena…',
-  opt:['Tersusun dari unsur logam dan nonlogam','Dapat membentuk ion positif','Tersusun dari dua unsur nonlogam','Menghasilkan elektron bebas','Memiliki titik leleh sangat tinggi seperti logam'],
-  c:2,
-  exp:'Karbon disulfida tersusun dari karbon (C) dan sulfur (S) yang keduanya nonlogam. Senyawa kovalen terbentuk melalui <b>penggunaan pasangan elektron bersama</b> antaratom nonlogam, bukan melalui perpindahan elektron seperti pada senyawa ion. Karena itu karbon disulfida termasuk senyawa kovalen.',
-  key:'Kovalen = berbagi pasangan elektron antar unsur nonlogam.'
- }
+  {
+    q: 'Senyawa ionik biner dengan rumus kimia <span class="formula">CaCl<sub>2</sub></span> memiliki nama senyawa yang tepat yaitu...',
+    opt: ['Kalium klorat', 'Kalsium klorida', 'Kalsium oksida', 'Kalium klorit', 'Kalsium hipoklorit'],
+    c: 1,
+    exp: 'Senyawa <span class="formula">CaCl<sub>2</sub></span> tersusun dari kation kalsium <span class="formula">Ca<sup>2+</sup></span> dan anion klorida <span class="formula">Cl<sup>−</sup></span>. Penamaan senyawa ionik biner dilakukan dengan menyebutkan nama kation terlebih dahulu, kemudian nama anion dengan akhiran "-ida", sehingga nama senyawanya adalah kalsium klorida.',
+    key: 'Kation logam + Anion nonlogam (-ida).'
+  },
+  {
+    q: 'Tentukan benar atau salah pernyataan di bawah ini!<br><br>"Rumus kimia senyawa sulfur difluorida adalah <span class="formula">SF<sub>2</sub></span>"',
+    opt: ['Benar', 'Salah'],
+    c: 0,
+    exp: 'Senyawa <span class="formula">SF<sub>2</sub></span> tersusun dari satu atom sulfur dan dua atom fluor. Penamaan senyawa kovalen dilakukan dengan menyebut nama unsur pertama, kemudian nama unsur kedua yang diakhiri "-ida" dan diberi awalan sesuai jumlah atomnya. Karena terdapat dua atom fluor, digunakan awalan "di-", sehingga nama senyawanya adalah sulfur difluorida. Oleh sebab itu, pernyataan tersebut benar.',
+    key: 'di = 2 atom fluor.'
+  },
+  {
+    q: 'Nama senyawa dari rumus kimia <span class="formula">NH<sub>4</sub>Cl</span> adalah...',
+    opt: ['Amonium klorat', 'Amonium klorida', 'Amonium klorit', 'Aluminium klorida', 'Natrium klorida'],
+    c: 1,
+    exp: 'Senyawa <span class="formula">NH<sub>4</sub>Cl</span> terdiri atas ion amonium <span class="formula">NH<sub>4</sub><sup>+</sup></span> sebagai kation poliatomik dan ion klorida <span class="formula">Cl<sup>−</sup></span> sebagai anion. Penamaannya dilakukan dengan menyebut nama kation terlebih dahulu diikuti nama anion, sehingga diperoleh nama amonium klorida.',
+    key: 'Kation poliatomik amonium + klorida.'
+  },
+  {
+    q: 'Tentukan benar atau salah pernyataan di bawah ini!<br><br>"Nama senyawa dari <span class="formula">CH<sub>3</sub>COOH</span> adalah asam asetat."',
+    opt: ['Benar', 'Salah'],
+    c: 0,
+    exp: 'Senyawa <span class="formula">CH<sub>3</sub>COOH</span> dikenal sebagai asam asetat. Senyawa ini memiliki gugus karboksil (COOH) yang menyebabkan sifat asamnya. Oleh sebab itu, pernyataan tersebut benar.',
+    key: 'Gugus karboksil = asam organik (asetat).'
+  },
+  {
+    q: 'Nama senyawa basa dari rumus kimia <span class="formula">Sr(OH)<sub>2</sub></span> adalah...',
+    opt: ['Stronsium oksida', 'Stronsium hidroksit', 'Stronsium dihidroksida', 'Stronsium hidroksida', 'Distronsium hidroksida'],
+    c: 3,
+    exp: 'Senyawa <span class="formula">Sr(OH)<sub>2</sub></span> tersusun dari ion stronsium <span class="formula">Sr<sup>2+</sup></span> dan ion hidroksida <span class="formula">OH<sup>−</sup></span>. Penamaan senyawa basa dilakukan dengan menyebut nama logam terlebih dahulu kemudian diikuti kata "hidroksida". Karena itu, nama yang tepat adalah stronsium hidroksida.',
+    key: 'Logam + hidroksida.'
+  },
+  {
+    q: 'Pasangan nama senyawa yang tepat untuk <span class="formula">P<sub>4</sub>O<sub>7</sub></span>, <span class="formula">HBr</span>, dan <span class="formula">BrF<sub>3</sub></span> secara berturut-turut adalah...',
+    opt: [
+      'Fosfor oksida, asam bromida, brom fluorida',
+      'Tetrafosfor heptaoksida, hidrogen bromida, brom trifluorida',
+      'Tetrafosfor heptaoksida, brom trifluorida, hidrogen bromida',
+      'Fosfor heptaoksida, hidrogen bromida, brom trifluorida',
+      'Tetrafosfor oksida, hidrogen bromida, brom trifluorida'
+    ],
+    c: 1,
+    exp: 'Sesuai aturan penamaan: <br>1. <span class="formula">P<sub>4</sub>O<sub>7</sub></span> memiliki 4 atom P (tetra) dan 7 atom O (hepta) -> Tetrafosfor heptaoksida.<br>2. <span class="formula">HBr</span> merupakan senyawa biner -> Hidrogen bromida.<br>3. <span class="formula">BrF<sub>3</sub></span> memiliki 3 atom F (tri) -> Brom trifluorida.',
+    key: 'tetra = 4, hepta = 7, tri = 3.'
+  },
+  {
+    q: 'Nama senyawa basa dari rumus kimia <span class="formula">Zn(OH)<sub>2</sub></span> adalah...',
+    opt: ['Zink oksida', 'Zink hidroksida', 'Zink dioksida', 'Zink hidrogen oksida', 'Zink klorida'],
+    c: 1,
+    exp: 'Senyawa <span class="formula">Zn(OH)<sub>2</sub></span> terdiri atas kation seng <span class="formula">Zn<sup>2+</sup></span> dan anion hidroksida <span class="formula">OH<sup>−</sup></span>. Penamaan senyawa basa dilakukan dengan menyebut nama kation terlebih dahulu, kemudian diikuti kata "hidroksida". Karena zink memiliki muatan tetap yaitu +2, penamaannya cukup disebut zink hidroksida.',
+    key: 'Kation Zn²⁺ + hidroksida.'
+  },
+  {
+    q: 'Nama senyawa dari rumus kimia <span class="formula">KI</span> adalah...',
+    opt: ['Kalium iodat', 'Kalium iodida', 'Kalium iodit', 'Kalsium iodida', 'Kalium oksida'],
+    c: 1,
+    exp: 'Senyawa KI tersusun dari ion kalium <span class="formula">K<sup>+</sup></span> dan ion iodida <span class="formula">I<sup>−</sup></span>. Karena kalium termasuk logam golongan IA yang memiliki muatan tetap +1, penamaannya cukup disebut "kalium", lalu diikuti nama anion "iodida", sehingga diperoleh nama kalium iodida.',
+    key: 'Logam IA + nonlogam (-ida).'
+  },
+  {
+    q: 'Nama senyawa dari rumus kimia <span class="formula">Na<sub>2</sub>SO<sub>4</sub></span> adalah...',
+    opt: ['Natrium sulfit', 'Natrium sulfida', 'Natrium sulfat', 'Dinatrium sulfat', 'Natrium sulfur oksida'],
+    c: 2,
+    exp: 'Senyawa <span class="formula">Na<sub>2</sub>SO<sub>4</sub></span> tersusun dari ion natrium <span class="formula">Na<sup>+</sup></span> dan ion sulfat <span class="formula">SO<sub>4</sub><sup>2−</sup></span>. Penamaan senyawa ionik dilakukan dengan menyebut nama kation terlebih dahulu kemudian nama anion poliatomik. Oleh karena itu, nama senyawa tersebut adalah natrium sulfat.',
+    key: 'SO₄²⁻ adalah ion sulfat.'
+  },
+  {
+    q: 'Nama senyawa asam dari rumus kimia <span class="formula">H<sub>2</sub>S</span> adalah...',
+    opt: ['Asam sulfat', 'Asam sulfit', 'Asam sulfida', 'Asam tiosulfat', 'Hidrogen sulfida'],
+    c: 2,
+    exp: 'Senyawa <span class="formula">H<sub>2</sub>S</span> merupakan senyawa asam biner yang tersusun dari hidrogen dan sulfur. Penamaan asam biner dilakukan dengan menuliskan kata "asam" diikuti nama unsur nonlogam dengan akhiran "-ida". Oleh karena itu, nama senyawa tersebut adalah asam sulfida.',
+    key: 'Asam + Sulfur (-ida).'
+  },
+  {
+    q: 'Tentukan benar atau salah pernyataan di bawah ini!<br><br>"Nama senyawa dari <span class="formula">Ca(OH)<sub>2</sub></span> adalah kalium hidroksida"',
+    opt: ['Benar', 'Salah'],
+    c: 1,
+    exp: 'Senyawa <span class="formula">Ca(OH)<sub>2</sub></span> tersusun dari kation kalsium (<span class="formula">Ca<sup>2+</sup></span>) dan anion hidroksida (<span class="formula">OH<sup>−</sup></span>), sehingga nama senyawanya adalah kalsium hidroksida. Adapun kalium hidroksida merupakan senyawa yang tersusun dari ion kalium (<span class="formula">K<sup>+</sup></span>) dan hidroksida (<span class="formula">OH<sup>−</sup></span>) dengan rumus kimia KOH. Oleh karena itu, nama yang benar untuk <span class="formula">Ca(OH)<sub>2</sub></span> adalah kalsium hidroksida, bukan kalium hidroksida. Jadi, pernyataan tersebut salah.',
+    key: 'Ca adalah simbol untuk Kalsium.'
+  },
+  {
+    q: 'Nama senyawa dari rumus kimia <span class="formula">H<sub>2</sub>SO<sub>3</sub></span> adalah...',
+    opt: ['Asam sulfat', 'Asam sulfida', 'Asam sulfit', 'Asam klorida', 'Asam tiosulfat'],
+    c: 2,
+    exp: 'Senyawa <span class="formula">H<sub>2</sub>SO<sub>3</sub></span> merupakan asam oksigen yang mengandung ion sulfit <span class="formula">SO<sub>3</sub><sup>2−</sup></span>. Penamaan asam oksigen dilakukan dengan menambahkan kata "asam" di depan nama anionnya. Karena anionnya adalah sulfit, maka nama senyawanya adalah asam sulfit.',
+    key: 'SO₃²⁻ adalah ion sulfit.'
+  },
+  {
+    q: 'Tentukan benar atau salah pernyataan di bawah ini!<br><br>"Rumus kimia senyawa natrium nitrit adalah <span class="formula">NaNO<sub>3</sub></span>"',
+    opt: ['Benar', 'Salah'],
+    c: 1,
+    exp: 'Senyawa <span class="formula">NaNO<sub>3</sub></span> tersusun dari ion natrium <span class="formula">Na<sup>+</sup></span> dan ion nitrat <span class="formula">NO<sub>3</sub><sup>−</sup></span>. Ion <span class="formula">NO<sub>3</sub><sup>−</sup></span> disebut nitrat, sedangkan ion nitrit memiliki rumus <span class="formula">NO<sub>2</sub><sup>−</sup></span>. Oleh karena itu, nama yang benar untuk <span class="formula">NaNO<sub>3</sub></span> adalah natrium nitrat, sehingga pernyataan tersebut salah.',
+    key: 'Nitrat = NO₃⁻, Nitrit = NO₂⁻.'
+  },
+  {
+    q: 'Nama senyawa dari rumus kimia <span class="formula">PCl<sub>3</sub></span> adalah...',
+    opt: ['Fosfor monoklorida', 'Fosfor diklorida', 'Fosfor triklorida', 'Difosfor triklorida', 'Fosfor heptaklorida'],
+    c: 2,
+    exp: 'Senyawa <span class="formula">PCl<sub>3</sub></span> tersusun dari unsur nonlogam fosfor dan klorin sehingga termasuk senyawa kovalen biner. Penamaan senyawa kovalen menggunakan awalan Yunani untuk menunjukkan jumlah atom. Pada senyawa ini terdapat satu atom fosfor dan tiga atom klorin, sehingga namanya adalah fosfor triklorida. Awalan "mono-" pada unsur pertama biasanya tidak digunakan.',
+    key: 'tri = 3 atom klorin.'
+  },
+  {
+    q: 'Tentukan benar atau salah pernyataan di bawah ini!<br><br>"Rumus kimia natrium oksida adalah <span class="formula">Na<sub>2</sub>O</span>."',
+    opt: ['Benar', 'Salah'],
+    c: 0,
+    exp: 'Natrium oksida tersusun dari ion natrium <span class="formula">Na<sup>+</sup></span> dan ion oksida <span class="formula">O<sup>2−</sup></span>. Untuk menetralkan muatan diperlukan dua ion natrium untuk setiap satu ion oksida, sehingga rumus kimianya menjadi <span class="formula">Na<sub>2</sub>O</span>. Oleh karena itu, pernyataan tersebut benar.',
+    key: 'Na⁺ (IA) dan O²⁻ (VIA).'
+  }
 ];
