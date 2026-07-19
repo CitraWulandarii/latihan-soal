@@ -51,15 +51,26 @@ function setLoading(button, isLoading) {
   }
 }
 
+// ─── Crypto Helper ───────────────────────────────────────────────────────────
+/**
+ * Hash a string with SHA-256, returns lowercase hex string.
+ * Uses the browser's native SubtleCrypto — no library needed.
+ */
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+
 // ─── Login ────────────────────────────────────────────────────────────────────
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-  loginForm.addEventListener('submit', e => {
+  loginForm.addEventListener('submit', async e => {
     e.preventDefault();
     const formData = new FormData(loginForm);
-    const data = new URLSearchParams();
-    data.append('action', 'login');
-    for (const [key, value] of formData) data.append(key, value);
+    const rawPassword = formData.get('password') || '';
 
     const btn = loginForm.querySelector('button[type="submit"]');
     setLoading(btn, true);
@@ -81,6 +92,14 @@ if (loginForm) {
       }
       return;
     }
+
+    // Hash password di client sebelum dikirim
+    const hashedPassword = await sha256(rawPassword);
+
+    const data = new URLSearchParams();
+    data.append('action', 'login');
+    data.append('username', formData.get('username'));
+    data.append('password', hashedPassword);
 
     fetch(url, { method: 'POST', body: data })
       .then(r => r.json())
@@ -108,15 +127,13 @@ if (loginForm) {
   });
 }
 
+
 // ─── Register ─────────────────────────────────────────────────────────────────
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
-  registerForm.addEventListener('submit', e => {
+  registerForm.addEventListener('submit', async e => {
     e.preventDefault();
     const formData = new FormData(registerForm);
-    const data = new URLSearchParams();
-    data.append('action', 'register');
-    for (const [key, value] of formData) data.append(key, value);
 
     const btn = registerForm.querySelector('button[type="submit"]');
     setLoading(btn, true);
@@ -128,6 +145,17 @@ if (registerForm) {
       showAlert(registerForm, 'error', 'URL Google Script belum diatur. Hubungi administrator.');
       return;
     }
+
+    // Hash password di client sebelum dikirim
+    const rawPassword = formData.get('password') || '';
+    const hashedPassword = await sha256(rawPassword);
+
+    const data = new URLSearchParams();
+    data.append('action', 'register');
+    data.append('name', formData.get('name'));
+    data.append('kelas', formData.get('kelas'));
+    data.append('username', formData.get('username'));
+    data.append('password', hashedPassword);
 
     fetch(url, { method: 'POST', body: data })
       .then(r => r.json())
@@ -151,6 +179,7 @@ if (registerForm) {
       });
   });
 }
+
 
 // ─── Prefill ──────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {

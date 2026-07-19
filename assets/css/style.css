@@ -26,14 +26,14 @@ html{height:100%} body{min-height:100%}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
 /* START */
-.hero{margin-top:54px;text-align:center}
+.hero{margin-top:106px;text-align:center}
 .hero-card{position:relative;background:var(--glass);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.85);border-radius:var(--r-lg);padding:34px 30px 34px;box-shadow:var(--shadow-lg);overflow:hidden}
 .hero-card::before{content:"";position:absolute;inset:0;background:
   radial-gradient(420px 200px at 82% -10%,rgba(255,205,90,.30),transparent 70%),
   radial-gradient(380px 220px at 8% 112%,rgba(255,150,60,.24),transparent 70%);}
-.hero-mascot{position:relative;width:min(270px,74%);margin:0 auto 2px;display:block;
-  filter:drop-shadow(0 18px 22px rgba(210,110,20,.24));animation:bob 4.6s ease-in-out infinite}
+.hero-mascot{position:relative;width:min(270px,74%);margin:0 auto 20px;display:block;
+  animation:bob 4.6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1.2deg)}}
 .eyebrow{position:relative;display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:13px;
   color:var(--pri-700);background:#ffe9cf;border:1px solid #ffd9b0;padding:6px 14px;border-radius:30px;margin-bottom:14px}
@@ -293,10 +293,39 @@ html{height:100%} body{min-height:100%}
   transform: scale(1.1);
 }
 
+/* UNIVERSITY BANNER */
+.univ-banner {
+  top: 60px; left: 0; right: 0;
+  background: rgba(255,255,255,0.82);
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+}
+.univ-banner img {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.univ-banner span {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 16.5px;
+  color: #2d4a7a;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+}
+@media (max-width: 380px) {
+  .univ-banner span { font-size: 12px; }
+  .univ-banner img { height: 28px; }
+}
+
 /* DASHBOARD */
 .dash-wrap {
   max-width: 760px;
-  margin: 80px auto 40px; /* offset for header */
+  margin: 120px auto 40px; /* offset for header + univ-banner */
   padding: 0 18px;
 }
 .dash-wrap h2 {

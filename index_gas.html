@@ -54,6 +54,12 @@
     </div>
   </header>
 
+  <!-- University Banner -->
+  <div class="univ-banner">
+    <img src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/img/logo_1.jpg" alt="Logo Universitas Negeri Malang" />
+    <span>Universitas Negeri Malang</span>
+  </div>
+
   <!-- AUTH VIEW -->
   <section id="auth-screen" class="screen active">
     <div class="auth-container">
@@ -195,7 +201,7 @@
   <section class="screen" id="screen-start">
     <div class="hero">
       <div class="hero-card">
-        <img class="hero-mascot" src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/img/img_1.webp" alt="Maskot ilmuwan cilik" />
+        <img class="hero-mascot" id="hero-mascot" src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/img/img_1.jpg" alt="Maskot ilmuwan cilik" />
         <span class="eyebrow">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d35c06" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6.5L4.5 17a2.5 2.5 0 0 0 2.2 3.7h10.6A2.5 2.5 0 0 0 19.5 17L15 8.5V2"/><path d="M7 2h10M8.5 13h7"/></svg>
           Kuis Kimia Interaktif
@@ -318,5 +324,16 @@
   <script src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/js/auth.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/js/quiz.js" defer></script>
   <script type="module" src="https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/js/main.js"></script>
+  <script>
+    // Random mascot image (img_1.jpg ~ img_4.jpg)
+    (function () {
+      var n = Math.floor(Math.random() * 4) + 1;
+      var el = document.getElementById('hero-mascot');
+      if (el) {
+        var base = 'https://cdn.jsdelivr.net/gh/CitraWulandarii/latihan-soal@<?= versiGit ?>/assets/img/';
+        el.src = base + 'img_' + n + '.jpg';
+      }
+    })();
+  </script>
 </body>
 </html>

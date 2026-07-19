@@ -34,7 +34,7 @@ function handleRegister(e) {
   const name = e.parameter.name;
   const kelas = e.parameter.kelas;
   const username = e.parameter.username;
-  const password = e.parameter.password;
+  const password = e.parameter.password; // sudah di-hash dari client (SHA-256 hex)
   
   // Cek apakah username sudah ada
   const data = sheet.getDataRange().getValues();
@@ -45,36 +45,52 @@ function handleRegister(e) {
   }
   
   // Simpan data (Role default 'student' di kolom F)
+  // Password sudah berupa SHA-256 hash dari client
   sheet.appendRow([new Date(), name, kelas, username, password, 'student']);
   return respond({ status: 'success', message: 'Registrasi berhasil' });
 }
+
 
 function handleLogin(e) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrCreate(ss, 'users');
   
   const username = e.parameter.username;
-  const password = e.parameter.password;
+  const password = e.parameter.password; // sudah di-hash dari client (SHA-256 hex)
   
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
-    if (data[i][3] == username && data[i][4] == password) {
-      const role = data[i][5] || 'student';
-      // Return user data (name, kelas, and role)
-      return respond({ 
-        status: 'success', 
-        message: 'Login berhasil',
-        data: {
-          name: data[i][1],
-          kelas: data[i][2],
-          role: role
-        }
-      });
+    if (data[i][3] == username) {
+      let storedPassword = String(data[i][4]);
+
+      // Auto-migrate: jika password di DB masih plain text (bukan hash),
+      // hash dulu lalu simpan kembali ke sheet
+      if (!isHashed(storedPassword)) {
+        storedPassword = hashPassword(storedPassword);
+        sheet.getRange(i + 1, 5).setValue(storedPassword); // kolom E (index 4 → kolom ke-5)
+      }
+
+      // Bandingkan hash
+      if (storedPassword === password) {
+        const role = data[i][5] || 'student';
+        return respond({ 
+          status: 'success', 
+          message: 'Login berhasil',
+          data: {
+            name: data[i][1],
+            kelas: data[i][2],
+            role: role
+          }
+        });
+      } else {
+        break; // username ketemu tapi password salah
+      }
     }
   }
   
   return respond({ status: 'error', message: 'Username atau password salah' });
 }
+
 
 function handleSubmitScore(e) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -210,6 +226,32 @@ function respond(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
+// ─── Password Hashing (SHA-256) ─────────────────────────────────────────────────────────────
+
+/**
+ * Menghasilkan SHA-256 hash dari string, dikembalikan sebagai hex lowercase.
+ * Menggunakan Utilities.computeDigest bawaan Google Apps Script — tanpa library.
+ */
+function hashPassword(plainText) {
+  const bytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    plainText,
+    Utilities.Charset.UTF_8
+  );
+  return bytes.map(b => ('0' + (b & 0xff).toString(16)).slice(-2)).join('');
+}
+
+/**
+ * Deteksi apakah string sudah berupa SHA-256 hash:
+ * - Panjangnya tepat 64 karakter
+ * - Hanya berisi karakter hex lowercase (0-9, a-f)
+ * Jika kondisi ini TIDAK terpenuhi, berarti masih plain text.
+ */
+function isHashed(str) {
+  return /^[0-9a-f]{64}$/.test(str);
+}
+
 
 // Untuk menghindari CORS saat preflight OPTIONS (jika diperlukan)
 function doOptions(e) {
