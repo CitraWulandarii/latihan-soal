@@ -22,7 +22,6 @@ body {
 }
 
 #auth-screen {
-  min-height: 100vh;
   display: none;
   align-items: center;
   justify-content: center;
