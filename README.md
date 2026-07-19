@@ -3,7 +3,7 @@
 Latihan soal interaktif untuk mempermudah siswa dalam memahami tata nama senyawa ionik.
 
 ## Fitur
-- 5 tingkat kesulitan
+- 6 modul latihan soal
 - Pembelajaran langkah demi langkah
 - Latihan soal dengan feedback real-time
 - Pembelajaran visual dengan ilustrasi
@@ -14,12 +14,18 @@ Latihan soal interaktif untuk mempermudah siswa dalam memahami tata nama senyawa
 - CSS
 - Vanilla JavaScript
 
-## Cara menggunakan
-1. Buka file HTML di browser web
-2. Ikuti instruksi pada layar
-3. Pelajari konsep tata nama senyawa ionik
-4. Latih keterampilan Anda dengan latihan soal
-5. Dapatkan feedback real-time pada setiap jawaban
+## Cara Menjalankan Aplikasi
+
+Aplikasi ini sangat fleksibel dan menggunakan tiga file *entry point* (HTML utama) yang berbeda sesuai dengan lokasi di mana Anda menjalankan aplikasi ini:
+
+1. **Di Localhost / Web Server (Menggunakan `index.html`)**
+   Jalankan file `index.html` menggunakan Live Server atau XAMPP (contoh: `http://localhost/index.html`). Cocok digunakan untuk tahap *development* atau pengetesan luring. Anda wajib menyetel URL Pengaturan API GAS melalui ikon menu di pojok kanan atas. **Penting:** Jika URL GAS tidak disetel, aplikasi akan otomatis menggunakan mode *development* dan hanya menampilkan data *dummy*.
+   
+2. **Di Google Apps Script Web App (Menggunakan `index_gas.html`)**
+   Saat Anda melakukan *Deploy as Web App* melalui editor Google Apps Script, sistem akan merender `index_gas.html`. Mode ini adalah lingkungan produksi yang *native*. **Penting:** Anda perlu mensetting file `google_script.js` pada editor GAS. Pastikan untuk memasukkan **ID Spreadsheet** Anda yang benar, serta mengatur variabel versi atau *tag* repository (misalnya variabel `versiGit`) untuk mengakali/menghindari isu *cache* pada file JS dan CSS.
+
+3. **Di Google Site (Menggunakan `iframe.html`)**
+   Jika Anda ingin menyematkan (embed) aplikasi ini ke dalam halaman Google Site atau web statis lainnya, gunakan `iframe.html` di dalam tag `<iframe>`. **Penting:** Untuk mode ini, Anda perlu mengedit file `iframe.html` secara langsung dan mensetting/memasukkan URL GAS Anda di dalam file tersebut agar *iframe* dapat berkomunikasi dengan server.
 
 ## Pengaturan Database (Google Sheets & Google Apps Script)
 
@@ -33,7 +39,7 @@ Sheet ini digunakan untuk menyimpan data pendaftaran dan melakukan validasi saat
   - `nama`: Nama Lengkap Siswa
   - `kelas`: Kelas
   - `username`: Username unik untuk login
-  - `password`: Kata sandi akun
+  - `password`: Kata sandi akun (disimpan dalam format hash SHA-256). **Catatan Ganti Password Manual**: Jika Anda ingin mereset/mengganti password siswa langsung dari Google Sheets, cukup ketikkan password baru dalam format *plain text* (teks biasa). Saat siswa tersebut login, sistem akan secara otomatis mendeteksi password *plain text* tersebut, mengenkripsinya menjadi SHA-256, dan langsung memperbaruinya kembali di database.
   - `role`: Peran pengguna (misalnya: `student` atau `admin`)
 
 ### 2. Sheet `result` (Skor Akhir)

@@ -157,9 +157,15 @@ async function loadQuiz(id, cardElement = null) {
     // Expose quiz ID globally so quiz.js can submit score with correct key
     window.currentQuizId = id;
 
-    // Update page title
+    // Update page title and hero title
     document.title = quizModule.title || 'Kuis Kimia';
     window.isAdminView = false;
+    
+    const quizInfo = QUIZ_LIST.find(q => q.id === id);
+    if (quizInfo) {
+      const heroTitle = document.querySelector('#screen-start h1.font-display');
+      if (heroTitle) heroTitle.innerHTML = `${quizInfo.label}<br>${quizInfo.desc}`;
+    }
 
     // Fetch progress from GAS if logged in
     let savedState = null;
